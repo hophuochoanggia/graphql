@@ -1,0 +1,30 @@
+{
+  "development": {
+    "username": "root",
+    "password": null,
+    "database": "sequelize-example",
+    "host": "127.0.0.1",
+    "dialect": "sqlite",
+    "PORT": 3000,
+    "logging": false,
+    "SECRET": "123456"
+  },
+  "test": {
+    "username": "postgres",
+    "password": null,
+    "database": "test",
+    "host": "35.224.48.64",
+    "dialect": "postgres",
+    "PORT": 3000,
+    "logging": false,
+    "SECRET": "123456"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "database_production",
+    "host": "127.0.0.1",
+    "dialect": "sqlite",
+    "SECRET": "123456"
+  }
+}
