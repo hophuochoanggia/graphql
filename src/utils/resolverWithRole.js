@@ -1,28 +1,51 @@
 const acl = {
-  user: ["owner", "superadmin", "admin"],
-  createUser: ["superadmin", "admin"]
+  user: ['owner', 'superadmin', 'admin'],
+  users: ['superadmin', 'admin'],
+  createUser: ['superadmin', 'admin'],
+  editUserById: ['level', 'owner'],
+
+  eventType: ['superadmin', 'admin', 'consultant'],
+  eventTypes: ['superadmin', 'admin', 'consultant'],
+  createEventType: ['superadmin'],
+  editEventTypeById: ['superadmin'],
 };
 
-export const roleResolver = (methodName, role) =>
-  acl[methodName].indexOf(role) > -1;
+const level = {
+  superadmin: 3,
+  admin: 2,
+  consultant: 1,
+  doctor: 1,
+  specialist: 1,
+  dentist: 1,
+};
+export const roles = ['superadmin', 'admin', 'consultant', 'doctor', 'specialist', 'dentist'];
+export const roleResolver = (methodName, role) => acl[methodName].indexOf(role) > -1;
 
 export const resolverWithRole = (
   methodName,
   role,
-  { userId, targetId },
-  resolver
+  {
+    model, ownerId, targetId, targetRole,
+  },
+  resolver,
 ) => {
   const rule = acl[methodName];
-  if (rule.indexOf("owner") > -1) {
-    //console.log(userId === targetId);
-    if ((methodName = "user" && userId === targetId)) {
+  if (rule.indexOf('owner') > -1) {
+    if (model === 'user' && ownerId === targetId) {
       return resolver();
     }
   }
 
+  if (rule.indexOf('level') > -1) {
+    if (level[targetRole] < level[role]) {
+      return resolver();
+    }
+    if (role === 'superadmin' || (targetRole === 'admin' && role === 'admin')) {
+      return resolver();
+    }
+  }
   if (!rule || rule.indexOf(role) > -1) {
     return resolver();
-  } else {
-    return Promise.reject("Unauthorized");
   }
+  return Promise.reject(new Error('Unauthorized'));
 };

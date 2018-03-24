@@ -1,7 +1,12 @@
-import user from "./user/user.js";
-import users from "./user/users.js";
+import user from './user/user';
+import users from './user/users';
+
+import eventType from './eventType/eventType';
+import eventTypes from './eventType/eventTypes';
 
 export default {
   user,
-  users
+  users,
+  eventType,
+  eventTypes,
 };

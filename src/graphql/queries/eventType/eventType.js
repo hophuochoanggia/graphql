@@ -1,16 +1,16 @@
 import { GraphQLID } from 'graphql';
 import { resolverWithRole } from '../../../utils/resolverWithRole';
-import User from '../../types/user';
+import eventType from '../../types/eventType';
 import models from '../../../models';
 
 export default {
-  type: User,
+  type: eventType,
   args: {
     targetId: {
       type: GraphQLID,
     },
   },
   resolve: (root, { targetId }, { id, role }) =>
-    resolverWithRole('user', role, { model: 'user', ownerId: id, targetId }, () =>
-      models.user.findById(targetId)),
+    resolverWithRole('eventType', role, { model: 'eventType', ownerId: id, targetId }, () =>
+      models.eventType.findById(targetId)),
 };

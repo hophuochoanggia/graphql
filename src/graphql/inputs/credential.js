@@ -1,8 +1,9 @@
-import { GraphQLInputObjectType, GraphQLString } from "graphql";
+import { GraphQLInputObjectType, GraphQLString } from 'graphql';
+
 export default new GraphQLInputObjectType({
-  name: "credentialInput",
+  name: 'credentialInput',
   fields: () => ({
     username: { type: GraphQLString },
-    password: { type: GraphQLString }
-  })
+    password: { type: GraphQLString },
+  }),
 });

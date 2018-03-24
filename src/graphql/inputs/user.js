@@ -1,12 +1,8 @@
-import {
-  GraphQLInputObjectType,
-  GraphQLString,
-  GraphQLList,
-  GraphQLBoolean
-} from "graphql";
-import GraphQLJSON from "graphql-type-json";
+import { GraphQLInputObjectType, GraphQLString, GraphQLBoolean } from 'graphql';
+import GraphQLJSON from 'graphql-type-json';
+
 export default new GraphQLInputObjectType({
-  name: "userInput",
+  name: 'userInput',
   fields: () => ({
     username: { type: GraphQLString },
     password: { type: GraphQLString },
@@ -28,6 +24,6 @@ export default new GraphQLInputObjectType({
     email2: { type: GraphQLString },
     providerNo: { type: GraphQLString },
     role: { type: GraphQLString },
-    legacy: { type: GraphQLJSON }
-  })
+    legacy: { type: GraphQLJSON },
+  }),
 });

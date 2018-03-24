@@ -1,37 +1,38 @@
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   const eventType = sequelize.define(
-    "eventType",
+    'eventType',
     {
       id: {
         type: DataTypes.UUID,
         primaryKey: true,
         defaultValue: DataTypes.UUIDV4,
-        unique: true
+        unique: true,
       },
       name: {
         type: DataTypes.STRING(50),
-        allowNull: false
+        allowNull: false,
+        unique: true,
       },
-      metaData: {
-        type: DataTypes.STRING(50),
-        allowNull: false
+      metadata: {
+        type: DataTypes.JSONB,
+        allowNull: false,
       },
       description: {
         type: DataTypes.STRING(100),
-        allowNull: false
-      }
+        allowNull: false,
+      },
     },
     {
       timestamps: true,
       freezeTableName: true,
       classMethods: {
-        associate: models => {
+        associate: (models) => {
           eventType.hasMany(models.event, {
-            onDelete: "restrict"
+            onDelete: 'restrict',
           });
-        }
-      }
-    }
+        },
+      },
+    },
   );
   return eventType;
 };

@@ -1,20 +1,20 @@
-var bcrypt = require("bcrypt");
-const salt = "12345";
-export const cryptPwd = password => {
-  return new Promise(function(resolve, reject) {
+const bcrypt = require('bcrypt');
+
+export const cryptPwd = password =>
+  new Promise((resolve, reject) => {
     bcrypt.genSalt(10, (err, salt) => {
-      bcrypt.hash(password, salt, (err, hash) => {
+      if (err) reject(new Error('HASHING ERROR'));
+      bcrypt.hash(password, salt, (error, hash) => {
+        if (error) reject(new Error('HASHING ERROR'));
         resolve(hash);
       });
     });
   });
-};
 
-export const comparePwd = (password, hash) => {
-  return new Promise((resolve, reject) => {
+export const comparePwd = (password, hash) =>
+  new Promise((resolve, reject) => {
     bcrypt.compare(password, hash, (err, res) => {
       if (err) reject(err);
       resolve(res);
     });
   });
-};

@@ -1,17 +1,16 @@
-import User from "../../types/user.js";
-import UserInput from "../../inputs/user.js";
-import { createUser, findUserById } from "../../resolver/user.js";
-import { resolverWithRole } from "../../../utils/resolverWithRole";
+import User from '../../types/user';
+import UserInput from '../../inputs/user';
+import { resolverWithRole } from '../../../utils/resolverWithRole';
+import models from '../../../models';
 
 export default {
   type: User,
   args: {
-    user: {
-      type: UserInput
-    }
+    input: {
+      type: UserInput,
+    },
   },
-  resolve: (source, { user }, { id, role = null }) =>
-    resolverWithRole("createUser", role, {}, () =>
-      createUser(user).then(({ id }) => findUserById(id))
-    )
+  resolve: (source, { input }, { role = null }) =>
+    resolverWithRole('createUser', role, {}, () =>
+      models.user.create(input).then(({ id }) => models.user.findById(id))),
 };

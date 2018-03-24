@@ -1,7 +1,15 @@
-import createUser from "./user/createUser.js";
-import login from "./user/login.js";
+import createUser from './user/createUser';
+import editUserById from './user/editUserById';
+import login from './user/login';
+
+import createEventType from './eventType/createEventType';
+import editEventTypeById from './eventType/editEventTypeById';
 
 export default {
   createUser,
-  login
+  login,
+  editUserById,
+
+  createEventType,
+  editEventTypeById,
 };
