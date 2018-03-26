@@ -23,7 +23,7 @@ models.sequelize
   .then(() => {
     startApp(app, config.PORT);
   })
-  .catch((e) => {
+  .catch(e => {
     throw new Error(e);
   });
 app.use(bodyParser.json());
@@ -33,10 +33,12 @@ app.post('/login', (req, res) => {
   res.status(200).send({ messages: 'Success' });
 });
 
-app.use(jwt({
-  secret: config.SECRET,
-  credentialsRequired: false,
-}));
+app.use(
+  jwt({
+    secret: config.SECRET,
+    credentialsRequired: false,
+  })
+);
 
 app.use((req, res, next) => {
   const ts = Math.round(new Date().getTime() / 1000);
@@ -56,5 +58,5 @@ app.use(
     context: req.user,
     pretty: true,
     graphiql: false,
-  })),
+  }))
 );

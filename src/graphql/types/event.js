@@ -1,4 +1,9 @@
-import { GraphQLObjectType, GraphQLString, GraphQLBoolean, GraphQLID } from 'graphql';
+import {
+  GraphQLObjectType,
+  GraphQLString,
+  GraphQLBoolean,
+  GraphQLID,
+} from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
 
 export default new GraphQLObjectType({

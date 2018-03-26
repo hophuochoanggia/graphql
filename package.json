@@ -42,7 +42,10 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "precommit": "prettier --write src/**/*.js && prettier --write test/**/*.js",
+    "precommit":
+      "prettier --single-quote --trailing-comma es5 --write src/**/*.js && prettier --single-quote --trailing-comma es5 --write test/**/*.js",
+    "prettier":
+      "prettier --single-quote --trailing-comma es5 --write src/**/*.js && prettier --single-quote --trailing-comma es5 --write test/**/*.js ",
     "start": "node src/index.js",
     "dev": "nodemon src/index.js --watch common --watch src",
     "test": "jest --watch",

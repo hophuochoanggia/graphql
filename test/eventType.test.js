@@ -60,19 +60,34 @@ afterAll(() => models.sequelize.sync({ force: true, logging: false }));
 
 describe('Event type model', () => {
   test('Field input validation', async () => {
-    const result = await graphql(schema, fieldValidation, {}, { role: 'superadmin' });
+    const result = await graphql(
+      schema,
+      fieldValidation,
+      {},
+      { role: 'superadmin' }
+    );
     const { message } = view(lensError, result);
     expect(message).toBeDefined();
   });
 
   test('Should allow to create event type', async () => {
-    const result = await graphql(schema, createEventType, {}, { role: 'superadmin' });
+    const result = await graphql(
+      schema,
+      createEventType,
+      {},
+      { role: 'superadmin' }
+    );
     const { id } = view(lensCreate, result);
     expect(id).toBeDefined();
   });
 
   test('Should deny same event type name', async () => {
-    const result = await graphql(schema, createEventType, {}, { role: 'superadmin' });
+    const result = await graphql(
+      schema,
+      createEventType,
+      {},
+      { role: 'superadmin' }
+    );
     const { message } = view(lensError, result);
     expect(message).toBeDefined();
   });

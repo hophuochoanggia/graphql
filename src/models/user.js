@@ -1,28 +1,28 @@
-import { cryptPwd } from "../utils/cryptPassword";
+import { cryptPwd } from '../utils/cryptPassword';
 
 module.exports = function(sequelize, DataTypes) {
   const user = sequelize.define(
-    "user",
+    'user',
     {
       id: {
         type: DataTypes.UUID,
         primaryKey: true,
         defaultValue: DataTypes.UUIDV4,
-        unique: true
+        unique: true,
       },
       username: {
         type: DataTypes.STRING(20),
         allowNull: false,
         unique: {
           args: true,
-          msg: "User already exist"
+          msg: 'User already exist',
         },
         validate: {
           len: {
             args: [4, 30],
-            msg: "User name is not in range 4-30"
-          }
-        }
+            msg: 'User name is not in range 4-30',
+          },
+        },
       },
       password: {
         type: DataTypes.STRING,
@@ -30,65 +30,65 @@ module.exports = function(sequelize, DataTypes) {
         validate: {
           len: {
             args: 5,
-            msg: "User password must be atleast 5 characters in length"
-          }
-        }
+            msg: 'User password must be atleast 5 characters in length',
+          },
+        },
       },
       firstName: {
         type: DataTypes.STRING(30),
-        allowNull: false
+        allowNull: false,
       },
       lastName: {
         type: DataTypes.STRING(30),
-        allowNull: false
+        allowNull: false,
       },
       address: {
         type: DataTypes.STRING(50),
-        defaultValue: null
+        defaultValue: null,
       },
       address2: {
         type: DataTypes.STRING(50),
-        defaultValue: null
+        defaultValue: null,
       },
       suburb: {
         type: DataTypes.STRING(20),
-        defaultValue: null
+        defaultValue: null,
       },
       state: {
         type: DataTypes.STRING(10),
-        defaultValue: null
+        defaultValue: null,
       },
       medicalCenter: {
         type: DataTypes.UUID,
-        defaultValue: null
+        defaultValue: null,
       },
       avatarUrl: {
         type: DataTypes.STRING,
-        defaultValue: null // set to default avatar
+        defaultValue: null, // set to default avatar
       },
       isMale: {
         type: DataTypes.BOOLEAN,
-        defaultValue: true
+        defaultValue: true,
       },
       isActive: {
         type: DataTypes.BOOLEAN,
-        defaultValue: true
+        defaultValue: true,
       },
       workPhone: {
         type: DataTypes.STRING(20),
-        defaultValue: null
+        defaultValue: null,
       },
       homePhone: {
         type: DataTypes.STRING(20),
-        defaultValue: null
+        defaultValue: null,
       },
       mobile: {
         type: DataTypes.STRING(20),
-        defaultValue: null
+        defaultValue: null,
       },
       fax: {
         type: DataTypes.STRING(20),
-        defaultValue: null
+        defaultValue: null,
       },
       email: {
         type: DataTypes.STRING(50),
@@ -96,16 +96,16 @@ module.exports = function(sequelize, DataTypes) {
         validate: {
           len: {
             args: [6, 128],
-            msg: "Email address must be between 6 and 128 characters in length"
+            msg: 'Email address must be between 6 and 128 characters in length',
           },
           isEmail: {
-            msg: "Email address must be valid"
-          }
-        }
+            msg: 'Email address must be valid',
+          },
+        },
       },
       isEmailVerified: {
         type: DataTypes.BOOLEAN,
-        defaultValue: false
+        defaultValue: false,
       },
       email2: {
         type: DataTypes.STRING(50),
@@ -113,36 +113,36 @@ module.exports = function(sequelize, DataTypes) {
         validate: {
           len: {
             args: [6, 128],
-            msg: "Email address must be between 6 and 128 characters in length"
+            msg: 'Email address must be between 6 and 128 characters in length',
           },
           isEmail: {
-            msg: "Email address must be valid"
-          }
-        }
+            msg: 'Email address must be valid',
+          },
+        },
       },
       isEmail2Verified: {
         type: DataTypes.BOOLEAN,
-        defaultValue: false
+        defaultValue: false,
       },
       providerNo: {
         type: DataTypes.STRING(20),
-        defaultValue: null
+        defaultValue: null,
       },
       role: {
         type: DataTypes.ENUM(
-          "superadmin",
-          "admin",
-          "consultant",
-          "doctor",
-          "specialist",
-          "dentist"
+          'superadmin',
+          'admin',
+          'consultant',
+          'doctor',
+          'specialist',
+          'dentist'
         ),
-        defaultValue: "consultant"
+        defaultValue: 'consultant',
       },
       legacy: {
         type: DataTypes.JSONB,
-        defaultValue: {}
-      }
+        defaultValue: {},
+      },
     },
     {
       timestamps: true,
@@ -157,16 +157,16 @@ module.exports = function(sequelize, DataTypes) {
             .catch(err => {
               if (err) console.log(err);
             });
-        }
+        },
       },
       classMethods: {
         associate: models => {
           user.belongsTo(models.mdeicalCenter, {
-            as: "medicalCenter",
-            onDelete: "restrict"
+            as: 'medicalCenter',
+            onDelete: 'restrict',
           });
-        }
-      }
+        },
+      },
     }
   );
 

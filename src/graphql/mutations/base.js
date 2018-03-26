@@ -21,7 +21,7 @@ export default {
     },
     resolve(source, { input }) {
       const { username, password } = input;
-      return models.user.find({ where: { username } }).then(async (user) => {
+      return models.user.find({ where: { username } }).then(async user => {
         if (user) {
           const compare = await comparePwd(password, user.password);
           if (compare) {
@@ -45,7 +45,10 @@ export default {
     ...args,
     resolve: (source, { input }, { role = null }) =>
       resolverWithRole(`create${capitalize(args.model)}`, role, {}, () =>
-        models[args.model].create(input).then(({ id }) => models[args.model].findById(id))),
+        models[args.model]
+          .create(input)
+          .then(({ id }) => models[args.model].findById(id))
+      ),
   }),
   editById: args => ({
     ...args,
@@ -60,7 +63,8 @@ export default {
             instance,
             model: 'user',
           },
-          () => instance.update(input),
-        )),
+          () => instance.update(input)
+        )
+      ),
   }),
 };

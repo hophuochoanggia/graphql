@@ -1,100 +1,105 @@
-import { GraphQLObjectType, GraphQLString, GraphQLBoolean, GraphQLID } from "graphql";
-import GraphQLJSON from "graphql-type-json";
+import {
+  GraphQLObjectType,
+  GraphQLString,
+  GraphQLBoolean,
+  GraphQLID,
+} from 'graphql';
+import GraphQLJSON from 'graphql-type-json';
 
 export default new GraphQLObjectType({
-  name: "User",
-  description: "User of the system",
+  name: 'User',
+  description: 'User of the system',
   fields() {
     return {
       id: {
         type: GraphQLID,
-        description: "User Id",
+        description: 'User Id',
         resolve: user => user.id,
       },
       username: {
         type: GraphQLString,
-        description: "username",
+        description: 'username',
         resolve: user => user.username,
       },
       password: {
         type: GraphQLString,
-        description: "username",
+        description: 'username',
       },
       firstName: {
         type: GraphQLString,
-        description: "firstName",
+        description: 'firstName',
       },
       lastName: {
         type: GraphQLString,
-        description: "lastName",
+        description: 'lastName',
       },
       address: {
         type: GraphQLString,
-        description: "firstName",
+        description: 'firstName',
       },
       address2: {
         type: GraphQLString,
-        description: "lastName",
+        description: 'lastName',
       },
       suburb: {
         type: GraphQLString,
-        description: "firstName",
+        description: 'firstName',
       },
       state: {
         type: GraphQLString,
-        description: "lastName",
+        description: 'lastName',
       },
       medicalCenter: {
         type: GraphQLString,
-        description: "Medical Center",
+        description: 'Medical Center',
       },
       avatarUrl: {
         type: GraphQLString,
-        description: "Profile avatar",
+        description: 'Profile avatar',
       },
       isMale: {
         type: GraphQLBoolean,
-        description: "Gender",
+        description: 'Gender',
       },
       isActive: {
         type: GraphQLBoolean,
-        description: "Account status",
+        description: 'Account status',
       },
       workPhone: {
         type: GraphQLString,
-        description: "Work phone",
+        description: 'Work phone',
       },
       homePhone: {
         type: GraphQLString,
-        description: "Hone phone",
+        description: 'Hone phone',
       },
       mobile: {
         type: GraphQLString,
-        description: "Mobile phone",
+        description: 'Mobile phone',
       },
       fax: {
         type: GraphQLString,
-        description: "Fax",
+        description: 'Fax',
       },
       email: {
         type: GraphQLString,
-        description: "Email",
+        description: 'Email',
       },
       email2: {
         type: GraphQLString,
-        description: "Email2",
+        description: 'Email2',
       },
       providerNo: {
         type: GraphQLString,
-        description: "Provider number",
+        description: 'Provider number',
       },
       role: {
         type: GraphQLString,
-        description: "Role",
+        description: 'Role',
       },
       legacy: {
         type: GraphQLJSON,
-        description: "Old data",
+        description: 'Old data',
       },
     };
   },

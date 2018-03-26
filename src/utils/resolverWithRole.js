@@ -19,8 +19,16 @@ const level = {
   specialist: 1,
   dentist: 1,
 };
-export const roles = ['superadmin', 'admin', 'consultant', 'doctor', 'specialist', 'dentist'];
-export const roleResolver = (methodName, role) => acl[methodName].indexOf(role) > -1;
+export const roles = [
+  'superadmin',
+  'admin',
+  'consultant',
+  'doctor',
+  'specialist',
+  'dentist',
+];
+export const roleResolver = (methodName, role) =>
+  acl[methodName].indexOf(role) > -1;
 
 export const resolverWithRole = (
   methodName,
@@ -31,7 +39,7 @@ export const resolverWithRole = (
     model, // this to determine rule to determine owner
     instance, // instsance is retrived in resolve function (id === instance.id)
   },
-  resolver,
+  resolver
 ) => {
   const rule = acl[methodName];
   if (rule.indexOf('owner') > -1) {
@@ -44,7 +52,10 @@ export const resolverWithRole = (
     if (level[role] > level[instance.role]) {
       return resolver();
     }
-    if (role === 'superadmin' || (instance.role === 'admin' && role === 'admin')) {
+    if (
+      role === 'superadmin' ||
+      (instance.role === 'admin' && role === 'admin')
+    ) {
       return resolver();
     }
   }

@@ -8,13 +8,21 @@ export default {
   findById: args => ({
     ...args,
     resolve: (root, { id }, { user }) =>
-      resolverWithRole(args.model, user.role, { id, ownerId: user.id, model: args.model }, () =>
-        models[args.model].findById(id)),
+      resolverWithRole(
+        args.model,
+        user.role,
+        { id, ownerId: user.id, model: args.model },
+        () => models[args.model].findById(id)
+      ),
   }),
   find: args => ({
     args: { input: { type: FilterInput } },
     type: new GraphQLList(args.type),
-    resolve: (root, { offset = 0, input: { username, filteredRole } }, { user }) =>
+    resolve: (
+      root,
+      { offset = 0, input: { username, filteredRole } },
+      { user }
+    ) =>
       resolverWithRole(`${args.model}s`, user.role, {}, () => {
         const where = {};
         if (username) {
