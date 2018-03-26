@@ -2,7 +2,7 @@ import { GraphQLObjectType, GraphQLString } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
 
 export default new GraphQLObjectType({
-  name: 'eventType',
+  name: 'EventType',
   description: 'Event type',
   fields() {
     return {

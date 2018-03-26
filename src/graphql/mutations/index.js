@@ -1,16 +1,12 @@
 import base from './base';
-import user from '../mapping/user';
-import eventType from '../mapping/eventType';
-import event from '../mapping/event';
+import login from './login';
+import * as mapping from '../mapping';
 
-export default {
-  login: base.login(),
-  createUser: base.create(user),
-  editUserById: base.editById(user),
-
-  createEventType: base.create(eventType),
-  editEventTypeById: base.editById(eventType),
-
-  createEvent: base.create(event),
-  editEventById: base.editById(event),
-};
+const mutation = {};
+Object.values(mapping).forEach((m) => {
+  Object.values(base).forEach((method) => {
+    mutation[method.name(m)] = method.resolver(m);
+  });
+});
+mutation[login.name()] = login.resolver();
+export default mutation;

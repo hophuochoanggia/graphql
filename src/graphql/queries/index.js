@@ -1,12 +1,10 @@
 import base from './base';
+import * as mapping from '../mapping';
 
-import user from '../mapping/user';
-import eventType from '../mapping/eventType';
-
-export default {
-  user: base.findById(user),
-  users: base.find(user),
-
-  eventType: base.findById(eventType),
-  eventTypes: base.find(eventType),
-};
+const query = {};
+Object.values(mapping).forEach((m) => {
+  Object.values(base).forEach((method) => {
+    query[method.name(m)] = method.resolver(m);
+  });
+});
+export default query;
