@@ -1,104 +1,104 @@
-module.exports = function (sequelize, DataTypes) {
+module.exports = function(sequelize, DataTypes) {
   const event = sequelize.define(
-    'event',
+    "event",
     {
       id: {
         type: DataTypes.UUID,
         primaryKey: true,
         defaultValue: DataTypes.UUIDV4,
-        unique: true,
+        unique: true
       },
       type: {
         type: DataTypes.UUID, // type table
-        allowNull: false,
+        allowNull: false
       },
       date: {
         type: DataTypes.DATEONLY,
-        allowNull: false,
+        allowNull: false
       },
       patient: {
         type: DataTypes.UUID,
-        allowNull: false,
+        allowNull: false
       },
       status: {
-        type: DataTypes.ENUM('active', 'inactive', 'completed', 'deleted'),
-        defaultValue: 'active',
+        type: DataTypes.ENUM("active", "inactive", "completed", "deleted"),
+        defaultValue: "active"
       },
       inactiveReason: {
         type: DataTypes.UUID,
-        allowNull: true,
+        allowNull: true
       },
       consultant: {
         type: DataTypes.UUID,
-        allowNull: false,
+        allowNull: false
       },
       referingDoctor: {
         type: DataTypes.UUID,
-        allowNull: false,
+        allowNull: false
       },
       requestingSpecialist: {
         type: DataTypes.UUID,
-        allowNull: true,
+        allowNull: true
       },
       reportingSpecialist: {
         type: DataTypes.UUID,
-        allowNull: false,
+        allowNull: false
       },
       dentist: {
         type: DataTypes.UUID,
-        allowNull: true,
+        allowNull: true
       },
       prevEvent: {
         type: DataTypes.UUID,
-        allowNull: true,
+        allowNull: true
       },
       data: {
         // default get from eventType metadata
         type: DataTypes.JSONB,
-        allowNull: false,
+        allowNull: false
       },
       legacy: {
         type: DataTypes.JSONB,
-        defaultValue: {},
-      },
+        defaultValue: {}
+      }
     },
     {
       timestamps: true,
       freezeTableName: true,
       classMethods: {
-        associate: (models) => {
+        associate: models => {
           event.belongsTo(models.user, {
-            as: 'consultant',
-            onDelete: 'restrict',
+            as: "consultant",
+            onDelete: "restrict"
           });
           event.belongsTo(models.user, {
-            as: 'referringDoctor',
-            onDelete: 'restrict',
+            as: "referringDoctor",
+            onDelete: "restrict"
           });
           event.belongsTo(models.user, {
-            as: 'requestingSpecialist',
-            onDelete: 'restrict',
+            as: "requestingSpecialist",
+            onDelete: "restrict"
           });
           event.belongsTo(models.user, {
-            as: 'reportingSpecialist',
-            onDelete: 'restrict',
+            as: "reportingSpecialist",
+            onDelete: "restrict"
           });
           event.belongsTo(models.user, {
-            as: 'dentist',
-            onDelete: 'restrict',
+            as: "dentist",
+            onDelete: "restrict"
           });
 
           event.belongsTo(models.eventType, {
-            as: 'type',
-            onDelete: 'restrict',
+            as: "type",
+            onDelete: "restrict"
           });
           event.belongsTo(models.reason, {
-            as: 'reason',
-            onDelete: 'cascade',
+            as: "reason",
+            onDelete: "cascade"
           });
-        },
-      },
-    },
+        }
+      }
+    }
   );
   return event;
 };

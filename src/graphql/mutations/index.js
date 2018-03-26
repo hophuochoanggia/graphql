@@ -1,15 +1,16 @@
-import createUser from './user/createUser';
-import editUserById from './user/editUserById';
-import login from './user/login';
-
-import createEventType from './eventType/createEventType';
-import editEventTypeById from './eventType/editEventTypeById';
+import base from './base';
+import user from '../mapping/user';
+import eventType from '../mapping/eventType';
+import event from '../mapping/event';
 
 export default {
-  createUser,
-  login,
-  editUserById,
+  login: base.login(),
+  createUser: base.create(user),
+  editUserById: base.editById(user),
 
-  createEventType,
-  editEventTypeById,
+  createEventType: base.create(eventType),
+  editEventTypeById: base.editById(eventType),
+
+  createEvent: base.create(event),
+  editEventById: base.editById(event),
 };

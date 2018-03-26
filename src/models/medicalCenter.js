@@ -1,49 +1,49 @@
-module.exports = function (sequelize, DataTypes) {
+module.exports = function(sequelize, DataTypes) {
   const medicalCenter = sequelize.define(
-    'medicalCenter',
+    "medicalCenter",
     {
       id: {
         type: DataTypes.UUID,
         primaryKey: true,
         defaultValue: DataTypes.UUIDV4,
-        unique: true,
+        unique: true
       },
       name: {
         type: DataTypes.STRING(50),
-        allowNull: false,
+        allowNull: false
       },
       address: {
         type: DataTypes.STRING(50),
-        defaultValue: null,
+        defaultValue: null
       },
       address2: {
         type: DataTypes.STRING(50),
-        defaultValue: null,
+        defaultValue: null
       },
       suburb: {
         type: DataTypes.STRING(20),
-        defaultValue: null,
+        defaultValue: null
       },
       state: {
         type: DataTypes.STRING(10),
-        defaultValue: null,
+        defaultValue: null
       },
       description: {
         type: DataTypes.STRING(100),
-        allowNull: false,
-      },
+        allowNull: false
+      }
     },
     {
       timestamps: true,
       freezeTableName: true,
       classMethods: {
-        associate: (models) => {
+        associate: models => {
           medicalCenter.hasMany(models.user, {
-            onDelete: 'restrict',
+            onDelete: "restrict"
           });
-        },
-      },
-    },
+        }
+      }
+    }
   );
   return medicalCenter;
 };

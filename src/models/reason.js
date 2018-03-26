@@ -6,12 +6,12 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.UUID,
         primaryKey: true,
         defaultValue: DataTypes.UUIDV4,
-        unique: true,
+        unique: true
       },
       description: {
         type: DataTypes.STRING(10),
-        allowNull: false,
-      },
+        allowNull: false
+      }
     },
     {
       timestamps: true,
@@ -19,10 +19,10 @@ module.exports = function(sequelize, DataTypes) {
       classMethods: {
         associate: models => {
           reason.hasMany(models.event, {
-            onDelete: "restrict",
+            onDelete: "restrict"
           });
-        },
-      },
+        }
+      }
     }
   );
   return reason;

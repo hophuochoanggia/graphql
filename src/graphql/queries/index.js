@@ -1,12 +1,12 @@
-import user from './user/user';
-import users from './user/users';
+import base from './base';
 
-import eventType from './eventType/eventType';
-import eventTypes from './eventType/eventTypes';
+import user from '../mapping/user';
+import eventType from '../mapping/eventType';
 
 export default {
-  user,
-  users,
-  eventType,
-  eventTypes,
+  user: base.findById(user),
+  users: base.find(user),
+
+  eventType: base.findById(eventType),
+  eventTypes: base.find(eventType),
 };

@@ -6,6 +6,7 @@ const acl = {
 
   eventType: ['superadmin', 'admin', 'consultant'],
   eventTypes: ['superadmin', 'admin', 'consultant'],
+
   createEventType: ['superadmin'],
   editEventTypeById: ['superadmin'],
 };
@@ -25,22 +26,25 @@ export const resolverWithRole = (
   methodName,
   role,
   {
-    model, ownerId, targetId, targetRole,
+    id,
+    ownerId, // getting from the context (jwt)
+    model, // this to determine rule to determine owner
+    instance, // instsance is retrived in resolve function (id === instance.id)
   },
   resolver,
 ) => {
   const rule = acl[methodName];
   if (rule.indexOf('owner') > -1) {
-    if (model === 'user' && ownerId === targetId) {
+    if (model === 'user' && ownerId === id) {
       return resolver();
     }
   }
 
   if (rule.indexOf('level') > -1) {
-    if (level[targetRole] < level[role]) {
+    if (level[role] > level[instance.role]) {
       return resolver();
     }
-    if (role === 'superadmin' || (targetRole === 'admin' && role === 'admin')) {
+    if (role === 'superadmin' || (instance.role === 'admin' && role === 'admin')) {
       return resolver();
     }
   }

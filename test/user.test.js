@@ -158,22 +158,21 @@ describe('User ACL', () => {
   describe('Query user', () => {
     // eslint-disable-next-line
     roles.map((role, i) => {
-      const permission = ['superadmin', 'admin', 'consultant'];
+      const allowedRole = ['superadmin', 'admin', 'consultant'];
       test(`Should ${
-        permission.indexOf(role) > -1 ? '' : 'not'
+        allowedRole.indexOf(role) > -1 ? '' : 'not'
       } allow to fetch consultant as ${role}/owner`, async () => {
         const query = `
           {
             user(
-              targetId: "${user[2].id}"
+              id: "${user[2].id}"
             ) {
               username
             }
           }
         `;
-        const result = await graphql(schema, query, {}, { id: user[i].id, role });
-
-        if (permission.indexOf(role) > -1) {
+        const result = await graphql(schema, query, {}, { user: user[i].dataValues });
+        if (allowedRole.indexOf(role) > -1) {
           const { username } = result.data.user;
           expect(username).toBe('consultant');
         } else {
@@ -186,15 +185,16 @@ describe('User ACL', () => {
   describe('Query users', () => {
     // eslint-disable-next-line
     roles.map((role, i) => {
-      const permission = ['superadmin', 'admin'];
+      const allowedRole = ['superadmin', 'admin'];
       test(`Should ${
-        permission.indexOf(role) > -1 ? '' : 'not'
+        allowedRole.indexOf(role) > -1 ? '' : 'not'
       } allow to fetch list user as ${role}`, async () => {
         const query = `
           {
             users(
-              params: {
-                username:"admin"
+              input: {
+                where: {username:"admin"}
+                offset: 0
               }
             ) {
               username
@@ -202,8 +202,9 @@ describe('User ACL', () => {
             }
           }
         `;
-        const result = await graphql(schema, query, {}, { id: user[i].id, role });
-        if (permission.indexOf(role) > -1) {
+
+        const result = await graphql(schema, query, {}, { user: user[i].dataValues });
+        if (allowedRole.indexOf(role) > -1) {
           expect(result.data.users[0].username).toBe('superadmin');
         } else {
           expect(result.errors[0].message).toBe('Unauthorized');
@@ -245,7 +246,7 @@ describe('User ACL', () => {
   describe('Mutation editUserById', () => {
     describe('Edit superadmin', () => {
       // eslint-disable-next-line
-      roles.map(role => {
+      roles.map((role, index) => {
         const allowedRole = ['superadmin'];
         test(`Should ${
           allowedRole.indexOf(role) > -1 ? '' : 'not'
@@ -254,7 +255,7 @@ describe('User ACL', () => {
             mutation {
               editUserById(
                 id: "${user[0].id}",
-                data: {
+                input: {
                   firstName:"editted",
                 }
               ) {
@@ -262,7 +263,7 @@ describe('User ACL', () => {
               }
             }
           `;
-          const result = await graphql(schema, query, {}, { role });
+          const result = await graphql(schema, query, {}, { user: user[index].dataValues });
           if (allowedRole.indexOf(role) > -1) {
             const { firstName } = result.data.editUserById;
             expect(firstName).toBe('editted');
@@ -275,7 +276,7 @@ describe('User ACL', () => {
 
     describe('Edit admin', () => {
       // eslint-disable-next-line
-      roles.map(role => {
+      roles.map((role, index) => {
         const allowedRole = ['superadmin', 'admin'];
         test(`Should ${
           allowedRole.indexOf(role) > -1 ? '' : 'not'
@@ -284,7 +285,7 @@ describe('User ACL', () => {
             mutation {
               editUserById(
                 id: "${user[1].id}",
-                data: {
+                input: {
                   firstName:"editted",
                 }
               ) {
@@ -292,7 +293,7 @@ describe('User ACL', () => {
               }
             }
           `;
-          const result = await graphql(schema, query, {}, { role });
+          const result = await graphql(schema, query, {}, { user: user[index].dataValues });
           if (allowedRole.indexOf(role) > -1) {
             const { firstName } = result.data.editUserById;
             expect(firstName).toBe('editted');
@@ -309,12 +310,12 @@ describe('User ACL', () => {
         const allowedRole = ['superadmin', 'admin', 'consultant'];
         test(`Should ${
           allowedRole.indexOf(role) > -1 ? '' : 'not'
-        } allow to edit admin as ${role}`, async () => {
+        } allow to edit consultant as ${role}`, async () => {
           const query = `
             mutation {
               editUserById(
                 id: "${user[2].id}",
-                data: {
+                input: {
                   firstName:"editted",
                 }
               ) {
@@ -322,7 +323,7 @@ describe('User ACL', () => {
               }
             }
           `;
-          const result = await graphql(schema, query, {}, { ownerId: user[index].id, role });
+          const result = await graphql(schema, query, {}, { user: user[index].dataValues });
           if (allowedRole.indexOf(role) > -1) {
             const { firstName } = result.data.editUserById;
             expect(firstName).toBe('editted');

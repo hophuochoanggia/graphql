@@ -88,7 +88,7 @@ describe('Event type ACL', () => {
       } allow to fetch event type as ${role}`, async () => {
         const query = `
           query {
-            eventType(targetId: "${eventType[0].id}") {
+            eventType(id: "${eventType[0].id}") {
               id
               name
               description
@@ -96,7 +96,7 @@ describe('Event type ACL', () => {
           }
         `;
 
-        const result = await graphql(schema, query, {}, { role });
+        const result = await graphql(schema, query, {}, { user: { role } });
         if (allowedRole.indexOf(role) > -1) {
           const { id } = result.data.eventType;
           expect(id).toBeDefined();
@@ -118,7 +118,9 @@ describe('Event type ACL', () => {
         const query = `
           query {
             eventTypes(
-              params: {
+              input: {
+                where: {}
+                offset: 0
               }
             ){
               id
@@ -128,7 +130,7 @@ describe('Event type ACL', () => {
           }
         `;
 
-        const result = await graphql(schema, query, {}, { role });
+        const result = await graphql(schema, query, {}, { user: { role } });
         if (allowedRole.indexOf(role) > -1) {
           const { id } = result.data.eventTypes[0];
           expect(id).toBeDefined();
@@ -184,7 +186,7 @@ describe('Event type ACL', () => {
             mutation {
               editEventTypeById(
                 id: "${eventType[0].id}",
-                data: {
+                input: {
                   description:"${role}",
                 }
               ) {
@@ -193,7 +195,7 @@ describe('Event type ACL', () => {
               }
             }
           `;
-        const result = await graphql(schema, query, {}, { role });
+        const result = await graphql(schema, query, {}, { user: { role } });
         if (allowedRole.indexOf(role) > -1) {
           const { description } = view(lensEdit, result);
           expect(description).toBe(role);
