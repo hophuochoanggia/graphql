@@ -10,11 +10,11 @@ import {
 import { GraphQLDate, GraphQLDateTime } from 'graphql-iso-date';
 import { defaultListArgs, attributeFields, typeMapper } from 'graphql-sequelize';
 import Sequelize from 'sequelize';
-
 import sequelize from '../models';
 import capitalize from '../utils/capitalize';
 import { resolverWithRole } from '../utils/resolverWithRole';
 
+console.log(sequelize.user);
 const { models } = sequelize.sequelize.modelManager;
 typeMapper.mapType((type) => {
   if (type instanceof Sequelize.UUID) {
@@ -94,7 +94,7 @@ models.forEach((m) => {
       ...attributeFields(m, { allowNull: true, exclude: ['id', 'createdAt', 'updatedAt'] }),
     }),
   });
-
+  // create
   mutations[`create${capitalize(m.name)}`] = {
     type: t,
     args: {
@@ -104,6 +104,8 @@ models.forEach((m) => {
       resolverWithRole(`create${capitalize(m.name)}`, user.role, {}, () =>
         m.create(input).then(instance => instance)),
   };
+
+  // editById
   mutations[`edit${capitalize(m.name)}ById`] = {
     type: t,
     args: {

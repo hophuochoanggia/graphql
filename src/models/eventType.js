@@ -1,4 +1,4 @@
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   const eventType = sequelize.define(
     'eventType',
     {
@@ -26,13 +26,13 @@ module.exports = function(sequelize, DataTypes) {
       timestamps: true,
       freezeTableName: true,
       classMethods: {
-        associate: models => {
+        associate: (models) => {
           eventType.hasMany(models.event, {
             onDelete: 'restrict',
           });
         },
       },
-    }
+    },
   );
   return eventType;
 };

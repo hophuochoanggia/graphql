@@ -1,4 +1,4 @@
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   const event = sequelize.define(
     'event',
     {
@@ -66,7 +66,7 @@ module.exports = function(sequelize, DataTypes) {
       timestamps: true,
       freezeTableName: true,
       classMethods: {
-        associate: models => {
+        associate: (models) => {
           event.belongsTo(models.user, {
             as: 'consultant',
             onDelete: 'restrict',
@@ -98,7 +98,7 @@ module.exports = function(sequelize, DataTypes) {
           });
         },
       },
-    }
+    },
   );
   return event;
 };

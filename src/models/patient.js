@@ -1,6 +1,6 @@
 import { cryptPwd } from '../utils/cryptPassword';
 
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   const patient = sequelize.define(
     'patient',
     {
@@ -107,7 +107,13 @@ module.exports = function(sequelize, DataTypes) {
     {
       timestamps: true,
       freezeTableName: true,
-    }
+      associate: (models) => {
+        patient.belongsTo(models.user, {
+          as: 'medicalCenter',
+          onDelete: 'restrict',
+        });
+      },
+    },
   );
   return patient;
 };

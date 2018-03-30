@@ -1,4 +1,4 @@
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   const medicalCenter = sequelize.define(
     'medicalCenter',
     {
@@ -37,13 +37,13 @@ module.exports = function(sequelize, DataTypes) {
       timestamps: true,
       freezeTableName: true,
       classMethods: {
-        associate: models => {
+        associate: (models) => {
           medicalCenter.hasMany(models.user, {
             onDelete: 'restrict',
           });
         },
       },
-    }
+    },
   );
   return medicalCenter;
 };

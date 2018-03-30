@@ -1,6 +1,6 @@
 import { cryptPwd } from '../utils/cryptPassword';
 
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   const user = sequelize.define(
     'user',
     {
@@ -135,7 +135,7 @@ module.exports = function(sequelize, DataTypes) {
           'consultant',
           'doctor',
           'specialist',
-          'dentist'
+          'dentist',
         ),
         defaultValue: 'consultant',
       },
@@ -151,23 +151,30 @@ module.exports = function(sequelize, DataTypes) {
         beforeSave: (user, options) => {
           user.username = user.username.toLowerCase();
           return cryptPwd(user.password)
-            .then(success => {
+            .then((success) => {
               user.password = success;
             })
-            .catch(err => {
+            .catch((err) => {
               if (err) console.log(err);
             });
         },
       },
       classMethods: {
-        associate: models => {
-          user.belongsTo(models.mdeicalCenter, {
+        associate: (models) => {
+          user.belongsTo(models.medicalCenter, {
             as: 'medicalCenter',
+            onDelete: 'restrict',
+          });
+
+          user.hasMany(models.event, {
+            onDelete: 'restrict',
+          });
+          user.hasMany(models.patient, {
             onDelete: 'restrict',
           });
         },
       },
-    }
+    },
   );
 
   return user;
