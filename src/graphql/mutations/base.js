@@ -7,8 +7,8 @@ export default {
     name: args => `create${capitalize(args.model)}`,
     resolver: args => ({
       ...args,
-      resolve: (source, { input }, { role = null }) =>
-        resolverWithRole(`create${capitalize(args.model)}`, role, {}, () =>
+      resolve: (source, { input }, { user }) =>
+        resolverWithRole(`create${capitalize(args.model)}`, user.role, {}, () =>
           models[args.model].create(input).then(({ id }) => models[args.model].findById(id))),
     }),
   },

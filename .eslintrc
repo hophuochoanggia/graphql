@@ -8,6 +8,8 @@
   "plugins": ["prettier"],
   "globals": { "jest": true },
   "rules": {
-    "func-names": 0
+    "func-names": 0,
+    "linebreak-style": 0,
+    "no-param-reassign": 0
   }
 }

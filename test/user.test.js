@@ -1,6 +1,6 @@
 import { graphql } from 'graphql';
 import { lensPath, view } from 'ramda';
-import schema from '../src/graphql';
+import schema from '../src/graph';
 import models from '../src/models';
 import { comparePwd } from '../src/utils/cryptPassword';
 import { roles, roleResolver } from '../src/utils/resolverWithRole';
@@ -68,9 +68,9 @@ const fieldValidation = `
   }
 `;
 
-let user = [];
+let users = [];
 beforeAll(async () => {
-  user = await models.user.bulkCreate([
+  users = await models.user.bulkCreate([
     {
       username: 'superadmin',
       password: '12345',
@@ -126,13 +126,8 @@ afterAll(() => models.sequelize.sync({ force: true, logging: false }));
 
 describe('User model', () => {
   test('Should be able to create user', async () => {
-    const result = await graphql(
-      schema,
-      createTesting,
-      {},
-      { role: 'superadmin' }
-    );
-    const { username } = view(lensCreate, result);
+    const result = await graphql(schema, createTesting, {}, { user: users[0].dataValues });
+    const { username } = result.data.createUser;
     expect(username).toBe('testing');
   });
   test('Should not be able to create duplicate user', async () => {
@@ -140,40 +135,23 @@ describe('User model', () => {
     expect(result.errors).not.toBe(undefined);
   });
   test('Upper case username is the same as lower case', async () => {
-    const result = await graphql(
-      schema,
-      createTESTING,
-      {},
-      { role: 'superadmin' }
-    );
+    const result = await graphql(schema, createTESTING, {}, { user: users[0].dataValues });
     const { message } = view(lensError, result);
     expect(message).toBe('User already exist');
   });
   test('Password should be hash', async () => {
-    const result = await graphql(
-      schema,
-      passwordHash,
-      {},
-      { role: 'superadmin' }
-    );
+    const result = await graphql(schema, passwordHash, {}, { user: users[0].dataValues });
     const { password } = view(lensCreate, result);
     const compare = await comparePwd('12345', password);
     expect(password).not.toBe('12345');
     expect(compare).toBeTruthy();
   });
   test('Should has field validate error', async () => {
-    const result = await graphql(
-      schema,
-      fieldValidation,
-      {},
-      { role: 'admin' }
-    );
+    const result = await graphql(schema, fieldValidation, {}, { user: users[0].dataValues });
     const { message } = result.errors[0];
     const error = message.split('\n');
     expect(error[0]).toBe('Validation error: User name is not in range 4-30,');
-    expect(error[1]).toBe(
-      'Validation error: User password must be atleast 5 characters in length'
-    );
+    expect(error[1]).toBe('Validation error: User password must be atleast 5 characters in length');
   });
 });
 describe('User ACL', () => {
@@ -185,20 +163,15 @@ describe('User ACL', () => {
         allowedRole.indexOf(role) > -1 ? '' : 'not'
       } allow to fetch consultant as ${role}/owner`, async () => {
         const query = `
-          {
-            user(
-              id: "${user[2].id}"
-            ) {
-              username
-            }
-          }
-        `;
-        const result = await graphql(
-          schema,
-          query,
-          {},
-          { user: user[i].dataValues }
-        );
+         {
+           user(
+             id: "${users[2].id}"
+           ) {
+             username
+           }
+         }
+       `;
+        const result = await graphql(schema, query, {}, { user: users[i].dataValues });
         if (allowedRole.indexOf(role) > -1) {
           const { username } = result.data.user;
           expect(username).toBe('consultant');
@@ -208,7 +181,6 @@ describe('User ACL', () => {
       });
     });
   });
-
   describe('Query users', () => {
     // eslint-disable-next-line
     roles.map((role, i) => {
@@ -217,55 +189,48 @@ describe('User ACL', () => {
         allowedRole.indexOf(role) > -1 ? '' : 'not'
       } allow to fetch list user as ${role}`, async () => {
         const query = `
-          {
-            users(
-              input: {
-                where: {username:"admin"}
-                offset: 0
-              }
-            ) {
-              username
-              role
-            }
+        {
+          users(
+            where: {username:"admin"}
+            offset: 0
+            limit: 10
+          ) {
+            username
+            role
           }
-        `;
-
-        const result = await graphql(
-          schema,
-          query,
-          {},
-          { user: user[i].dataValues }
-        );
+        }
+      `;
+        const result = await graphql(schema, query, {}, { user: users[i].dataValues });
         if (allowedRole.indexOf(role) > -1) {
           expect(result.data.users[0].username).toBe('superadmin');
+          expect(result.data.users[1].username).toBe('admin');
         } else {
           expect(result.errors[0].message).toBe('Unauthorized');
         }
       });
     });
   });
-
   describe('Mutation createUser', () => {
     // eslint-disable-next-line
-    roles.map(role => {
+    roles.map((role, index) => {
       const userByRole = `
-        mutation {
-          createUser(input: {
-            username:"${role}",
-            password:"12345",
-            firstName:"Gia",
-            lastName:"Ho",
-            email:"hogia@gmail.com"
-          }) {
-            username
-            password
-          }
+      mutation {
+        createUser(input: {
+          username:"${role}",
+          password:"12345",
+          firstName:"Gia",
+          lastName:"Ho",
+          email:"hogia@gmail.com"
+        }) {
+          username
+          password
         }
-      `;
+      }
+    `;
       test(`${role} ${
         roleResolver('createUser', role) ? '' : 'not'
       } should allow to create user`, async () => {
-        const result = await graphql(schema, userByRole, {}, { role });
+        const result = await graphql(schema, userByRole, {}, { user: users[index].dataValues });
         if (roleResolver('createUser', role)) {
           expect(result.createUser).not.toBe(null);
         } else {
@@ -274,7 +239,6 @@ describe('User ACL', () => {
       });
     });
   });
-
   describe('Mutation editUserById', () => {
     describe('Edit superadmin', () => {
       // eslint-disable-next-line
@@ -284,23 +248,18 @@ describe('User ACL', () => {
           allowedRole.indexOf(role) > -1 ? '' : 'not'
         } allow to edit superadmin as ${role}`, async () => {
           const query = `
-            mutation {
-              editUserById(
-                id: "${user[0].id}",
-                input: {
-                  firstName:"editted",
-                }
-              ) {
-                firstName
-              }
-            }
-          `;
-          const result = await graphql(
-            schema,
-            query,
-            {},
-            { user: user[index].dataValues }
-          );
+           mutation {
+             editUserById(
+               id: "${users[0].id}",
+               input: {
+                 firstName:"editted",
+               }
+             ) {
+               firstName
+             }
+           }
+         `;
+          const result = await graphql(schema, query, {}, { user: users[index].dataValues });
           if (allowedRole.indexOf(role) > -1) {
             const { firstName } = result.data.editUserById;
             expect(firstName).toBe('editted');
@@ -310,7 +269,6 @@ describe('User ACL', () => {
         });
       });
     });
-
     describe('Edit admin', () => {
       // eslint-disable-next-line
       roles.map((role, index) => {
@@ -319,23 +277,18 @@ describe('User ACL', () => {
           allowedRole.indexOf(role) > -1 ? '' : 'not'
         } allow to edit admin as ${role}`, async () => {
           const query = `
-            mutation {
-              editUserById(
-                id: "${user[1].id}",
-                input: {
-                  firstName:"editted",
-                }
-              ) {
-                firstName
-              }
-            }
-          `;
-          const result = await graphql(
-            schema,
-            query,
-            {},
-            { user: user[index].dataValues }
-          );
+             mutation {
+               editUserById(
+                 id: "${users[1].id}",
+                 input: {
+                   firstName:"editted",
+                 }
+               ) {
+                 firstName
+               }
+             }
+           `;
+          const result = await graphql(schema, query, {}, { user: users[index].dataValues });
           if (allowedRole.indexOf(role) > -1) {
             const { firstName } = result.data.editUserById;
             expect(firstName).toBe('editted');
@@ -345,7 +298,6 @@ describe('User ACL', () => {
         });
       });
     });
-
     describe('Edit consultant', () => {
       // eslint-disable-next-line
       roles.map((role, index) => {
@@ -354,23 +306,18 @@ describe('User ACL', () => {
           allowedRole.indexOf(role) > -1 ? '' : 'not'
         } allow to edit consultant as ${role}`, async () => {
           const query = `
-            mutation {
-              editUserById(
-                id: "${user[2].id}",
-                input: {
-                  firstName:"editted",
-                }
-              ) {
-                firstName
-              }
-            }
-          `;
-          const result = await graphql(
-            schema,
-            query,
-            {},
-            { user: user[index].dataValues }
-          );
+             mutation {
+               editUserById(
+                 id: "${users[2].id}",
+                 input: {
+                   firstName:"editted",
+                 }
+               ) {
+                 firstName
+               }
+             }
+           `;
+          const result = await graphql(schema, query, {}, { user: users[index].dataValues });
           if (allowedRole.indexOf(role) > -1) {
             const { firstName } = result.data.editUserById;
             expect(firstName).toBe('editted');

@@ -14,6 +14,9 @@
     "express-graphql": "^0.6.6",
     "express-jwt": "^5.3.1",
     "graphql": "^0.10.5",
+    "graphql-iso-date": "^3.5.0",
+    "graphql-relay": "^0.5.4",
+    "graphql-sequelize": "^8.0.0",
     "graphql-type-json": "^0.2.0",
     "jsonwebtoken": "^8.2.0",
     "pg": "^7.4.1",
@@ -42,8 +45,6 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "precommit":
-      "prettier --single-quote --trailing-comma es5 --write src/**/*.js && prettier --single-quote --trailing-comma es5 --write test/**/*.js",
     "prettier":
       "prettier --single-quote --trailing-comma es5 --write src/**/*.js && prettier --single-quote --trailing-comma es5 --write test/**/*.js ",
     "start": "node src/index.js",

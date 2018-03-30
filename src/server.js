@@ -4,9 +4,9 @@ import jwt from 'express-jwt';
 import GraphHTTP from 'express-graphql';
 
 import models from './models';
-import Schema from './graphql';
+import Schema from './graph';
 
-const env = process.env.NODE_ENV || 'development';
+const env = process.env.NODE_ENV || 'test';
 // eslint-disable-next-line
 const config = require(`${__dirname}/config/config.json`)[env];
 const app = express();
@@ -23,7 +23,7 @@ models.sequelize
   .then(() => {
     startApp(app, config.PORT);
   })
-  .catch(e => {
+  .catch((e) => {
     throw new Error(e);
   });
 app.use(bodyParser.json());
@@ -33,12 +33,10 @@ app.post('/login', (req, res) => {
   res.status(200).send({ messages: 'Success' });
 });
 
-app.use(
-  jwt({
-    secret: config.SECRET,
-    credentialsRequired: false,
-  })
-);
+app.use(jwt({
+  secret: config.SECRET,
+  credentialsRequired: false,
+}));
 
 app.use((req, res, next) => {
   const ts = Math.round(new Date().getTime() / 1000);
@@ -58,5 +56,5 @@ app.use(
     context: req.user,
     pretty: true,
     graphiql: false,
-  }))
+  })),
 );
