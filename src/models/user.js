@@ -5,10 +5,10 @@ module.exports = function (sequelize, DataTypes) {
     'user',
     {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         primaryKey: true,
-        defaultValue: DataTypes.UUIDV4,
-        unique: true,
+        autoIncrement: true,
+        allowNull: false,
       },
       username: {
         type: DataTypes.STRING(20),
@@ -56,10 +56,6 @@ module.exports = function (sequelize, DataTypes) {
       },
       state: {
         type: DataTypes.STRING(10),
-        defaultValue: null,
-      },
-      medicalCenter: {
-        type: DataTypes.UUID,
         defaultValue: null,
       },
       avatarUrl: {
@@ -130,14 +126,14 @@ module.exports = function (sequelize, DataTypes) {
       },
       role: {
         type: DataTypes.ENUM(
-          'superadmin',
-          'admin',
-          'consultant',
-          'doctor',
-          'specialist',
-          'dentist',
+          'SUPERADMIN',
+          'ADMIN',
+          'CONSULTANT',
+          'DOCTOR',
+          'SPECIALIST',
+          'DENTIST',
         ),
-        defaultValue: 'consultant',
+        defaultValue: 'CONSULTANT',
       },
       legacy: {
         type: DataTypes.JSONB,
@@ -148,34 +144,31 @@ module.exports = function (sequelize, DataTypes) {
       timestamps: true,
       freezeTableName: true,
       hooks: {
-        beforeSave: (user, options) => {
-          user.username = user.username.toLowerCase();
-          return cryptPwd(user.password)
-            .then((success) => {
-              user.password = success;
-            })
-            .catch((err) => {
-              if (err) console.log(err);
-            });
-        },
-      },
-      classMethods: {
-        associate: (models) => {
-          user.belongsTo(models.medicalCenter, {
-            as: 'medicalCenter',
-            onDelete: 'restrict',
-          });
-
-          user.hasMany(models.event, {
-            onDelete: 'restrict',
-          });
-          user.hasMany(models.patient, {
-            onDelete: 'restrict',
+        beforeSave: instance => {
+          instance.username = instance.username.toLowerCase();
+          instance.firstName = instance.firstName.toLowerCase();
+          instance.lastName = instance.lastName.toLowerCase();
+          instance.email = instance.email.toLowerCase();
+          instance.email2 = instance.email2 ? instance.email2.toLowerCase() : null;
+          instance.role = instance.role.toUpperCase();
+          return cryptPwd(instance.password).then(success => {
+            instance.password = success;
           });
         },
       },
     },
   );
 
+  user.associate = ({ event, patient, userEvent }) => {
+    user.patients = user.hasMany(patient, {
+      foreignKey: {
+        fieldName: 'consultantId',
+        allowNull: false,
+      },
+      onDelete: 'restrict',
+    });
+
+    user.events = user.belongsToMany(event, { through: { model: userEvent } });
+  };
   return user;
 };

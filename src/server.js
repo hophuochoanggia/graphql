@@ -4,7 +4,7 @@ import jwt from 'express-jwt';
 import GraphHTTP from 'express-graphql';
 
 import models from './models';
-import Schema from './graph';
+import Schema from './relay';
 
 const env = process.env.NODE_ENV || 'test';
 // eslint-disable-next-line
@@ -23,7 +23,7 @@ models.sequelize
   .then(() => {
     startApp(app, config.PORT);
   })
-  .catch((e) => {
+  .catch(e => {
     throw new Error(e);
   });
 app.use(bodyParser.json());

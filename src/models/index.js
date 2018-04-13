@@ -1,10 +1,10 @@
-import Sequelize from 'sequelize';
-import fs from 'fs';
-import path from 'path';
-import conf from '../config/config.json';
+const Sequelize = require('sequelize');
+const fs = require('fs');
+const path = require('path');
+const conf = require('../config/config.json');
 
 const basename = path.basename(module.filename);
-const env = process.env.NODE_ENV || 'test';
+const env = process.env.NODE_ENV || 'dev';
 const config = conf[env];
 const db = {};
 let sequelize;
@@ -17,38 +17,57 @@ if (config.use_env_variable) {
 fs
   .readdirSync(__dirname)
   .filter(file => file.indexOf('.') !== 0 && file !== basename && file.slice(-3) === '.js')
-  .forEach((file) => {
+  .forEach(file => {
     const model = sequelize.import(path.join(__dirname, file));
     db[model.name] = model;
   });
-Object.keys(db).forEach((modelName) => {
+Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
   }
 });
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
-
-// drop db before any run, Jest won't go through this code
-if (env === 'development') {
-  db.sequelize.sync({ force: true, logging: false }).then(async () => {
-    const { user } = db.sequelize.models;
-    user.create({
-      username: 'hoanggia',
-      password: '12345',
-      firstName: 'Gia',
-      lastName: 'Ho',
-      email: 'hoanggia@gmail.com',
-      role: 'superadmin',
-    });
-    user.create({
-      username: 'testing',
-      password: '12345',
-      firstName: 'Gia',
-      lastName: 'Ho',
-      email: 'hoanggia@gmail.com',
-      role: 'consultant',
-    });
+if (env === 'dev') {
+  db.sequelize.sync({ force: true, logging: false }).then(() => {
+    const { user, patient } = db.sequelize.models;
+    user
+      .create({
+        username: 'superadmin',
+        password: '12345',
+        firstName: 'superadmin',
+        lastName: 'Ho',
+        email: 'hoanggia@gmail.com',
+        role: 'superadmin'
+      })
+      .then(() => {
+        user
+          .create({
+            username: 'consultant',
+            password: '12345',
+            firstName: 'consultant',
+            lastName: 'Ho',
+            email: 'hoanggia@gmail.com',
+            role: 'consultant'
+          })
+          .then(consultant => {
+            patient.create({
+              firstName: 'Patient1',
+              lastName: 'Ho',
+              email: 'hoanggia@gmail.com',
+              birthday: new Date(),
+              consultantId: consultant.id
+            });
+            patient.create({
+              firstName: 'Patient2',
+              lastName: 'Ho',
+              email: 'hoanggia@gmail.com',
+              birthday: new Date(),
+              consultantId: consultant.id
+            });
+          });
+      });
   });
 }
+
 module.exports = db;

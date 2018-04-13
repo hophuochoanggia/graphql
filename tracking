@@ -1,0 +1,27 @@
+Bootstraping code: 2
+Model:
+    user: 2
+    patient: 1
+    event: 5
+    eventType: 2
+    reason: 1
+
+Unit Test for model:
+    user: 5
+    patient: 3
+    event: 
+    eventType: 3
+    reason: 1
+
+Relation: 
+    user-patient: 2
+    patient: 1
+    event: 4
+    eventType: 1
+    reason: 2
+
+Graphql:
+    Basic CRUD on all model: 5
+
+Graphql unit test:
+    Basic CRUD on all model: 5

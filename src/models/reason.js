@@ -1,12 +1,12 @@
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   const reason = sequelize.define(
     'reason',
     {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         primaryKey: true,
-        defaultValue: DataTypes.UUIDV4,
-        unique: true,
+        autoIncrement: true,
+        allowNull: false,
       },
       description: {
         type: DataTypes.STRING(10),
@@ -23,7 +23,7 @@ module.exports = function(sequelize, DataTypes) {
           });
         },
       },
-    }
+    },
   );
   return reason;
 };

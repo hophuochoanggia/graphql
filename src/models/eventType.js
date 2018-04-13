@@ -3,10 +3,10 @@ module.exports = function (sequelize, DataTypes) {
     'eventType',
     {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         primaryKey: true,
-        defaultValue: DataTypes.UUIDV4,
-        unique: true,
+        autoIncrement: true,
+        allowNull: false,
       },
       name: {
         type: DataTypes.STRING(50),
@@ -25,14 +25,21 @@ module.exports = function (sequelize, DataTypes) {
     {
       timestamps: true,
       freezeTableName: true,
-      classMethods: {
-        associate: (models) => {
-          eventType.hasMany(models.event, {
-            onDelete: 'restrict',
-          });
+      hooks: {
+        beforeSave: instance => {
+          instance.name = instance.name.toUpperCase();
         },
       },
     },
   );
+  eventType.associate = ({ event }) => {
+    eventType.events = eventType.hasMany(event, {
+      foreignKey: {
+        fieldName: 'typeId',
+        allowNull: false,
+      },
+      onDelete: 'restrict',
+    });
+  };
   return eventType;
 };

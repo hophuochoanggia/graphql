@@ -30,7 +30,7 @@ beforeAll(async () => {
 
 const createEventType = `
   mutation {
-    createEventType(input: {
+    createEvent(input: {
       name:"test",
       description:"test",
       metadata:{}
@@ -44,7 +44,7 @@ const createEventType = `
 
 const fieldValidation = `
   mutation {
-    createEventType(input: {
+    createEvent(input: {
       name:null,
       description:null,
       metadata:null
@@ -88,7 +88,7 @@ describe('Event type ACL', () => {
       } allow to fetch event type as ${role}`, async () => {
         const query = `
           query {
-            eventType(id: "${eventType[0].id}") {
+            event(id: "${eventType[0].id}") {
               id
               name
               description
@@ -117,7 +117,7 @@ describe('Event type ACL', () => {
       } allow to fetch event type as ${role}`, async () => {
         const query = `
           query {
-            eventTypes(
+            events(
               input: {
                 where: {}
                 offset: 0

@@ -1,6 +1,6 @@
 import {
   GraphQLObjectType,
-  GraphQLInputObjectType,
+  GraphQLNonNull,
   GraphQLSchema,
   GraphQLList,
   GraphQLID,
@@ -8,15 +8,14 @@ import {
   GraphQLInt,
 } from 'graphql';
 import { GraphQLDate, GraphQLDateTime } from 'graphql-iso-date';
-import { defaultListArgs, attributeFields, typeMapper } from 'graphql-sequelize';
-import Sequelize from 'sequelize';
-import sequelize from '../models';
+import { resolver, defaultListArgs, attributeFields, typeMapper } from 'graphql-sequelize';
+import models from '../models';
 import capitalize from '../utils/capitalize';
 import { resolverWithRole } from '../utils/resolverWithRole';
 
-console.log(sequelize.user);
-const { models } = sequelize.sequelize.modelManager;
-typeMapper.mapType((type) => {
+const { user, patient, Sequelize } = models;
+
+typeMapper.mapType(type => {
   if (type instanceof Sequelize.UUID) {
     return GraphQLID;
   }
@@ -34,11 +33,11 @@ typeMapper.mapType((type) => {
   }
   return false;
 });
-
+/*
 const type = {};
 const queries = {};
 const mutations = {};
-models.forEach((m) => {
+listModels.forEach((m) => {
   const t = new GraphQLObjectType({
     name: m.name,
     fields: {
@@ -129,14 +128,67 @@ models.forEach((m) => {
         )),
   };
 });
+*/
+const basePatientType = new GraphQLObjectType({
+  name: patient.name,
+  fields: {
+    ...attributeFields(patient, { allowNull: true, exclude: ['id', 'consultantId'] }),
+  },
+});
+
+const userWithRelationType = new GraphQLObjectType({
+  name: user.name,
+  fields: {
+    ...attributeFields(user, { allowNull: true, exclude: ['password'] }),
+    patients: {
+      type: new GraphQLList(basePatientType),
+      args: {
+        limit: {
+          type: GraphQLInt,
+        },
+        offset: {
+          type: GraphQLInt,
+        },
+        order: {
+          type: GraphQLString,
+        },
+        first: {
+          type: GraphQLInt,
+        },
+      },
+      resolve: resolver(() => user.patients, {
+        before(options, args) {
+          if (args.first) {
+            options.order = options.order || [];
+            options.order.push(['createdAt', 'ASC']);
+            if (args.first !== 0) {
+              options.limit = args.first;
+            }
+          }
+          return options;
+        },
+      }),
+    },
+  },
+});
 
 export default new GraphQLSchema({
   query: new GraphQLObjectType({
     name: 'query',
-    fields: queries,
+    fields: {
+      user: {
+        type: userWithRelationType,
+        args: {
+          id: {
+            type: new GraphQLNonNull(GraphQLInt),
+          },
+        },
+        resolve: resolver(user),
+      },
+    },
   }),
-  mutation: new GraphQLObjectType({
-    name: 'mutation',
-    fields: mutations,
-  }),
+  // mutation: new GraphQLObjectType({
+  //  name: 'mutation',
+  //  fields: mutations,
+  // }),
 });

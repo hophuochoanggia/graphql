@@ -1,17 +1,13 @@
-import { cryptPwd } from '../utils/cryptPassword';
+import validateRole from '../utils/validateRole';
 
 module.exports = function (sequelize, DataTypes) {
   const patient = sequelize.define(
     'patient',
     {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         primaryKey: true,
-        defaultValue: DataTypes.UUIDV4,
-        unique: true,
-      },
-      consultant: {
-        type: DataTypes.UUID,
+        autoIncrement: true,
         allowNull: false,
       },
       birthday: {
@@ -96,8 +92,8 @@ module.exports = function (sequelize, DataTypes) {
         allowNull: true,
       },
       dvaType: {
-        type: DataTypes.ENUM('gold', 'silver', 'orange'),
-        defaultValue: 'orange',
+        type: DataTypes.ENUM('GOLD', 'SILVER', 'ORANGE'),
+        defaultValue: 'ORANGE',
       },
       legacy: {
         type: DataTypes.JSONB,
@@ -107,13 +103,29 @@ module.exports = function (sequelize, DataTypes) {
     {
       timestamps: true,
       freezeTableName: true,
-      associate: (models) => {
-        patient.belongsTo(models.user, {
-          as: 'medicalCenter',
-          onDelete: 'restrict',
-        });
+      hooks: {
+        beforeSave: instance => {
+          instance.firstName = instance.firstName.toLowerCase();
+          instance.lastName = instance.lastName.toLowerCase();
+          instance.email = instance.email.toLowerCase();
+          instance.dvaType = instance.dvaType.toUpperCase();
+        },
       },
     },
   );
+
+  patient.associate = ({ user }) => {
+    patient.consultant = patient.belongsTo(user, {
+      as: 'consultant',
+      foreignKey: {
+        fieldName: 'consultantId',
+        allowNull: false,
+        validate: {
+          isConsultant: validateRole(user, 'CONSULTANT'),
+        },
+      },
+      onDelete: 'restrict',
+    });
+  };
   return patient;
 };

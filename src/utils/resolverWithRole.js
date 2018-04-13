@@ -1,55 +1,64 @@
 const acl = {
-  user: ['owner', 'superadmin', 'admin'],
-  users: ['superadmin', 'admin'],
-  createUser: ['superadmin', 'admin'],
-  editUserById: ['level', 'owner'],
+  user: ['OWNER', 'SUPERADMIN', 'ADMIN'],
+  users: ['SUPERADMIN', 'ADMIN'],
+  createUser: ['SUPERADMIN', 'ADMIN'],
+  editUserById: ['LEVEL', 'OWNER'],
 
-  eventType: ['superadmin', 'admin', 'consultant'],
-  eventTypes: ['superadmin', 'admin', 'consultant'],
+  createPatient: ['SUPERADMIN', 'ADMIN', 'CONSULTANT'],
+  editPatientById: ['SUPERADMIN', 'ADMIN', 'OWNER'],
 
-  createEventType: ['superadmin'],
-  editEventTypeById: ['superadmin'],
+  eventType: ['SUPERADMIN', 'ADMIN', 'CONSULTANT'],
+  eventTypes: ['SUPERADMIN', 'ADMIN', 'CONSULTANT'],
+
+  createEventType: ['SUPERADMIN'],
+  editEventTypeById: ['SUPERADMIN'],
+
+  createEvent: ['SUPERADMIN', 'ADMIN', 'CONSULTANT'],
+  editEventById: ['SUPERADMIN', 'ADMIN', 'CONSULTANT']
 };
 
 const level = {
-  superadmin: 3,
-  admin: 2,
-  consultant: 1,
-  doctor: 1,
-  specialist: 1,
-  dentist: 1,
+  SUPERADMIN: 3,
+  ADMIN: 2,
+  CONSULTANT: 1,
+  DOCTOR: 1,
+  SPECIALIST: 1,
+  DENTIST: 1
 };
-export const roles = ['superadmin', 'admin', 'consultant', 'doctor', 'specialist', 'dentist'];
+export const roles = ['SUPERADMIN', 'ADMIN', 'CONSULTANT', 'DOCTOR', 'SPECIALIST', 'DENTIST'];
 export const roleResolver = (methodName, role) => acl[methodName].indexOf(role) > -1;
 
 export const resolverWithRole = (
   methodName,
   role,
   {
-    id,
-    ownerId, // getting from the context (jwt)
-    model, // this to determine rule to determine owner
-    instance, // instsance is retrived in resolve function (id === instance.id)
+    actorId,
+    model,
+    instance // instsance is retrived in resolve function (id === instance.id)
   },
-  resolver,
+  resolver
 ) => {
   const rule = acl[methodName];
-  if (rule.indexOf('owner') > -1) {
-    if (model === 'user' && ownerId === id) {
+  if (!rule) return Promise.reject(new Error('Unauthorized')); // deny if can't find rule
+
+  if (rule.indexOf('OWNER') > -1) {
+    if (model === 'user' && actorId === instance.id) {
+      return resolver();
+    }
+    if (model === 'patient' && actorId === instance.consultantId) {
       return resolver();
     }
   }
-
-  if (rule.indexOf('level') > -1) {
+  // For user model only (user with higher level can edit lower level)
+  if (rule.indexOf('LEVEL') > -1) {
     if (level[role] > level[instance.role]) {
       return resolver();
     }
-    if (role === 'superadmin' || (instance.role === 'admin' && role === 'admin')) {
+    if (role === 'SUPERADMIN' || (instance.role === 'ADMIN' && role === 'ADMIN')) {
       return resolver();
     }
   }
-
-  if (!rule || rule.indexOf(role) > -1) {
+  if (rule.indexOf(role) > -1) {
     return resolver();
   }
   return Promise.reject(new Error('Unauthorized'));
