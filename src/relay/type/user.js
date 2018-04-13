@@ -4,7 +4,7 @@ import { relay } from 'graphql-sequelize';
 import models from '../../models';
 import patientType from './patient';
 import node from './node';
-import { userField, patientField } from '../field';
+import { patientField, userFieldNoPwd } from '../field';
 
 const { nodeInterface } = node;
 const { sequelizeConnection } = relay;
@@ -19,8 +19,8 @@ const userPatientConnection = sequelizeConnection({
     name: 'UserPatientOrderBy',
     values: {
       AGE: { value: ['createdAt', 'DESC'] },
-      LASTNAME: { value: ['lastName', 'ASC'] },
-    },
+      LASTNAME: { value: ['lastName', 'ASC'] }
+    }
   }),
   where: (key, value) => ({ [key]: { [Op.like]: `%${value}%` } }),
   connectionFields: {
@@ -28,24 +28,24 @@ const userPatientConnection = sequelizeConnection({
       type: GraphQLInt,
       resolve: ({ source }) => {
         source.countTasks();
-      },
-    },
-  },
+      }
+    }
+  }
 });
 
 export default new GraphQLObjectType({
   name: user.name,
   fields: {
     id: globalIdField(user.name),
-    ...userField,
+    ...userFieldNoPwd,
     patients: {
       type: userPatientConnection.connectionType,
       args: {
         ...userPatientConnection.connectionArgs,
-        ...patientField,
+        ...patientField
       },
-      resolve: userPatientConnection.resolve,
-    },
+      resolve: userPatientConnection.resolve
+    }
   },
-  interfaces: [nodeInterface],
+  interfaces: [nodeInterface]
 });
