@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import jwt from 'express-jwt';
 import GraphHTTP from 'express-graphql';
+import cors from 'cors';
 
 import models from './models';
 import Schema from './relay';
@@ -26,23 +27,20 @@ models.sequelize
   .catch(e => {
     throw new Error(e);
   });
+app.use('*', cors({ origin: 'http://localhost:8080' }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.post('/login', (req, res) => {
-  res.status(200).send({ messages: 'Success' });
-});
-
 app.use(jwt({
   secret: config.SECRET,
-  credentialsRequired: false,
+  credentialsRequired: false
 }));
 
 app.use((req, res, next) => {
   const ts = Math.round(new Date().getTime() / 1000);
   if (req && ts > req.exp) {
     res.status(404).send({
-      error: 'Token expires',
+      error: 'Token expires'
     });
   } else {
     next();
@@ -55,6 +53,6 @@ app.use(
     schema: Schema,
     context: req.user,
     pretty: true,
-    graphiql: false,
-  })),
+    graphiql: false
+  }))
 );

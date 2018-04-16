@@ -13,7 +13,7 @@ beforeAll(async () => {
 // afterAll(() => );
 const roles = ['SUPERADMIN', 'ADMIN', 'CONSULTANT', 'DOCTOR', 'SPECIALIST', 'DENTIST'];
 describe('Sequelize', () => {
-  describe('User', () => {
+  describe('User Model', () => {
     test('Test login', async () => {
       const mutation = `
         mutation {
@@ -29,6 +29,93 @@ describe('Sequelize', () => {
       const { token } = result.data.login;
       expect(token).toBeDefined();
     });
+    describe('query list user ACL', () => {
+      const allowedRole = ['SUPERADMIN', 'ADMIN'];
+      roles.map((role, index) =>
+        test(`As ${role}`, async () => {
+          const query = `
+            {
+              users {
+                firstName
+              }
+            }
+          `;
+          const result = await graphql(schema, query, {}, { role, id: data.users[index].id });
+          if (allowedRole.includes(role)) {
+            const { firstName } = result.data.users[0];
+            expect(firstName).toBe('gia');
+          } else {
+            const { message } = result.errors[0];
+            expect(message).toBe('Unauthorized');
+          }
+        }));
+    });
+
+    describe('query user ACL', () => {
+      const allowedRole = ['SUPERADMIN', 'ADMIN', 'OWNER'];
+      roles.map((role, index) =>
+        test(`As ${role}`, async () => {
+          const query = `
+            {
+              user(id:3) {
+                username
+                firstName
+              }
+            }
+          `;
+          const result = await graphql(schema, query, {}, { role, id: data.users[index].id });
+          if (allowedRole.includes(role)) {
+            const { username } = result.data.user;
+            expect(username).toBe('consultant');
+          } else {
+            const { message } = result.errors[0];
+            expect(message).toBe('Unauthorized');
+          }
+        }));
+    });
+
+    describe('user connection', () => {
+      test('Should be able to include patient', async () => {
+        const query = `
+            {
+              user(id:3) {
+                username
+                patients(first: 1) {
+                  edges {
+                    node {
+                      firstName
+                    }
+                  }
+                }
+              }
+            }
+          `;
+        const result = await graphql(schema, query, {}, { role: 'SUPERADMIN' });
+        const { firstName } = view(edgePath, result.data.user.patients);
+        expect(firstName).toBe('patient');
+      });
+
+      test('Should be able to include event', async () => {
+        const query = `
+            {
+              user(id:4) {
+                username
+                events(first: 10) {
+                  edges {
+                    node {
+                      date
+                    }
+                  }
+                }
+              }
+            }
+          `;
+        const result = await graphql(schema, query, {}, { role: 'SUPERADMIN' });
+        const { date } = view(edgePath, result.data.user.events);
+        expect(date).toBe('2018-04-13');
+      });
+    });
+
     describe('createUser ACL', () => {
       const allowedRole = ['SUPERADMIN', 'ADMIN'];
       roles.map(role =>
@@ -86,74 +173,80 @@ describe('Sequelize', () => {
           }
         }));
     });
-    describe('query list user ACL', () => {
-      const allowedRole = ['SUPERADMIN', 'ADMIN'];
-      roles.map((role, index) =>
-        test(`As ${role}`, async () => {
-          const query = `
-            {
-              users {
-                firstName
-              }
-            }
-          `;
-          const result = await graphql(schema, query, {}, { role, id: data.users[index].id });
-          if (allowedRole.includes(role)) {
-            const { firstName } = result.data.users[0];
-            expect(firstName).toBe('gia');
-          } else {
-            const { message } = result.errors[0];
-            expect(message).toBe('Unauthorized');
-          }
-        }));
-    });
+  });
 
-    describe('query user ACL', () => {
-      const allowedRole = ['SUPERADMIN', 'ADMIN', 'OWNER'];
-      roles.map((role, index) =>
-        test(`As ${role}`, async () => {
-          const query = `
-            {
-              user(id:3) {
-                username
-                firstName
-              }
-            }
-          `;
-          const result = await graphql(schema, query, {}, { role, id: data.users[index].id });
-          if (allowedRole.includes(role)) {
-            const { username } = result.data.user;
-            expect(username).toBe('consultant');
-          } else {
-            const { message } = result.errors[0];
-            expect(message).toBe('Unauthorized');
-          }
-        }));
-    });
-
-    describe('user patient connection', () => {
-      test('Should be able to include patient', async () => {
+  describe('Patient Model', () => {
+    describe('query event of a patient ACL', () => {
+      test('event that belong to a user', async () => {
         const query = `
             {
-              user(id:3) {
-                patients(first: 1) {
+              patient(id: 1) {
+                events {
                   edges {
                     node {
-                      firstName
+                      date
+                      status
                     }
                   }
                 }
               }
             }
           `;
-        const result = await graphql(schema, query, {}, { role: 'SUPERADMIN' });
-        const { firstName } = view(edgePath, result.data.user.patients);
-        expect(firstName).toBe('patient');
+        const result = await graphql(
+          schema,
+          query,
+          {},
+          { role: 'SUPERADMIN', id: data.users[1].id }
+        );
+        const { status } = view(edgePath, result.data.patient.events);
+        expect(status).toBe('active');
       });
     });
-  });
+    describe('query list patient ACL', () => {
+      const allowedRole = ['SUPERADMIN', 'ADMIN'];
+      roles.map((role, index) =>
+        test(`As ${role}`, async () => {
+          const query = `
+            {
+              patients {
+                firstName
+              }
+            }
+          `;
+          const result = await graphql(schema, query, {}, { role, id: data.users[index].id });
+          if (allowedRole.includes(role)) {
+            const { firstName } = result.data.patients[0];
+            expect(firstName).toBe('patient');
+          } else {
+            const { message } = result.errors[0];
+            expect(message).toBe('Unauthorized');
+          }
+        }));
+    });
+    describe('query patient ACL/include consultant', () => {
+      const allowedRole = ['SUPERADMIN', 'ADMIN'];
+      roles.map((role, index) =>
+        test(`As ${role}`, async () => {
+          const query = `
+            {
+              patient(id: 1) {
+                consultant {
+                  firstName
+                }
+              }
+            }
+          `;
+          const result = await graphql(schema, query, {}, { role, id: data.users[index].id });
+          if (allowedRole.includes(role)) {
+            const { firstName } = result.data.patient.consultant;
+            expect(firstName).toBe('change');
+          } else {
+            const { message } = result.errors[0];
+            expect(message).toBe('Unauthorized');
+          }
+        }));
+    });
 
-  describe('Patient', () => {
     describe('createPatient ACL', () => {
       const allowedRole = ['SUPERADMIN', 'ADMIN', 'CONSULTANT'];
       roles.map(role =>
@@ -193,7 +286,7 @@ describe('Sequelize', () => {
               editPatientById(input: {
                 id: 1
                 data: {
-                  firstName: "change",
+                  firstName: "${role}",
                 }
               }) {
                 response {
@@ -205,7 +298,7 @@ describe('Sequelize', () => {
           const result = await graphql(schema, mutation, {}, { role, id: data.users[index].id });
           if (allowedRole.includes(role)) {
             const { response: { firstName } } = result.data.editPatientById;
-            expect(firstName).toBe('change');
+            expect(firstName).toBe(role.toLowerCase());
           } else {
             const { message } = result.errors[0];
             expect(message).toBe('Unauthorized');
@@ -214,7 +307,7 @@ describe('Sequelize', () => {
     });
   });
 
-  describe('Event Type', () => {
+  describe('Event Type Model', () => {
     describe('createEventType ACL', () => {
       const allowedRole = ['SUPERADMIN'];
       roles.map(role =>
@@ -273,7 +366,43 @@ describe('Sequelize', () => {
     });
   });
 
-  describe('Event', () => {
+  describe('Event Model', () => {
+    describe('query event ACL', () => {
+      const allowedRole = ['SUPERADMIN', 'ADMIN'];
+      roles.map((role, index) =>
+        test(`As ${role}`, async () => {
+          const query = `
+            {
+              event(id: 2) {
+                date
+                patient {
+                  firstName
+                }
+                type {
+                  name
+                }
+                inactiveReason {
+                  description
+                }
+              }
+            }
+          `;
+          const result = await graphql(schema, query, {}, { role, id: data.users[index].id });
+          if (allowedRole.includes(role)) {
+            const { date } = result.data.event;
+            const patientName = result.data.event.patient.firstName;
+            const typeName = result.data.event.type.name;
+            const { description } = result.data.event.inactiveReason;
+            expect(patientName).toBe('patient');
+            expect(typeName).toBe('STUDY');
+            expect(description).toBe('old');
+            expect(date).toBe('2018-04-13');
+          } else {
+            const { message } = result.errors[0];
+            expect(message).toBe('Unauthorized');
+          }
+        }));
+    });
     describe('createEvent ACL', () => {
       const allowedRole = ['SUPERADMIN', 'ADMIN', 'CONSULTANT'];
       roles.map(role =>
@@ -286,7 +415,7 @@ describe('Sequelize', () => {
                   score: 1
                 }
                 doctorId: 4
-                requestingSpecialistId: 4
+                requestingSpecialistId: 5
                 typeId: 1
                 patientId: 1
               }) {

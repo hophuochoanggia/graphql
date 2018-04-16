@@ -4,6 +4,8 @@ const acl = {
   createUser: ['SUPERADMIN', 'ADMIN'],
   editUserById: ['LEVEL', 'OWNER'],
 
+  patient: ['SUPERADMIN', 'ADMIN'],
+  patients: ['SUPERADMIN', 'ADMIN'],
   createPatient: ['SUPERADMIN', 'ADMIN', 'CONSULTANT'],
   editPatientById: ['SUPERADMIN', 'ADMIN', 'OWNER'],
 
@@ -13,6 +15,8 @@ const acl = {
   createEventType: ['SUPERADMIN'],
   editEventTypeById: ['SUPERADMIN'],
 
+  event: ['SUPERADMIN', 'ADMIN'],
+  events: ['SUPERADMIN', 'ADMIN'],
   createEvent: ['SUPERADMIN', 'ADMIN', 'CONSULTANT'],
   editEventById: ['SUPERADMIN', 'ADMIN', 'CONSULTANT']
 };

@@ -18,10 +18,6 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.ENUM('active', 'inactive', 'completed', 'deleted'),
         defaultValue: 'active'
       },
-      inactiveReason: {
-        type: DataTypes.INTEGER,
-        allowNull: true
-      },
       prevEvent: {
         type: DataTypes.INTEGER,
         allowNull: true
@@ -59,7 +55,7 @@ module.exports = function (sequelize, DataTypes) {
   );
 
   event.associate = ({
-    user, userEvent, patient, eventType
+    user, userEvent, patient, eventType, reason
   }) => {
     event.users = event.belongsToMany(user, {
       through: {
@@ -71,6 +67,14 @@ module.exports = function (sequelize, DataTypes) {
       as: 'type',
       foreignKey: {
         allowNull: false
+      },
+      onDelete: 'restrict'
+    });
+
+    event.reason = event.belongsTo(reason, {
+      as: 'inactiveReason',
+      foreignKey: {
+        allowNull: true
       },
       onDelete: 'restrict'
     });

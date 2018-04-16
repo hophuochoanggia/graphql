@@ -5,7 +5,6 @@ import { reasonField } from '../field';
 import node from './node';
 
 const { nodeInterface } = node;
-
 export default new GraphQLObjectType({
   name: reason.name,
   fields: {

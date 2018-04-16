@@ -8,63 +8,63 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false,
+        allowNull: false
       },
       birthday: {
         type: DataTypes.DATEONLY,
-        allowNull: false,
+        allowNull: false
       },
       firstName: {
         type: DataTypes.STRING(30),
-        allowNull: false,
+        allowNull: false
       },
       lastName: {
         type: DataTypes.STRING(30),
-        allowNull: false,
+        allowNull: false
       },
       address: {
         type: DataTypes.STRING(50),
-        defaultValue: null,
+        defaultValue: null
       },
       address2: {
         type: DataTypes.STRING(50),
-        defaultValue: null,
+        defaultValue: null
       },
       suburb: {
         type: DataTypes.STRING(20),
-        defaultValue: null,
+        defaultValue: null
       },
       state: {
         type: DataTypes.STRING(10),
-        defaultValue: null,
+        defaultValue: null
       },
       avatarUrl: {
         type: DataTypes.STRING,
-        defaultValue: null, // set to default avatar
+        defaultValue: null // set to default avatar
       },
       isMale: {
         type: DataTypes.BOOLEAN,
-        defaultValue: true,
+        defaultValue: true
       },
       isActive: {
         type: DataTypes.BOOLEAN,
-        defaultValue: true,
+        defaultValue: true
       },
       workPhone: {
         type: DataTypes.STRING(20),
-        defaultValue: null,
+        defaultValue: null
       },
       homePhone: {
         type: DataTypes.STRING(20),
-        defaultValue: null,
+        defaultValue: null
       },
       mobile: {
         type: DataTypes.STRING(20),
-        defaultValue: null,
+        defaultValue: null
       },
       fax: {
         type: DataTypes.STRING(20),
-        defaultValue: null,
+        defaultValue: null
       },
       email: {
         type: DataTypes.STRING(50),
@@ -72,33 +72,33 @@ module.exports = function (sequelize, DataTypes) {
         validate: {
           len: {
             args: [6, 128],
-            msg: 'Email address must be between 6 and 128 characters in length',
+            msg: 'Email address must be between 6 and 128 characters in length'
           },
           isEmail: {
-            msg: 'Email address must be valid',
-          },
-        },
+            msg: 'Email address must be valid'
+          }
+        }
       },
       medicare: {
         type: DataTypes.STRING(20),
-        allowNull: true,
+        allowNull: true
       },
       drivingLicense: {
         type: DataTypes.STRING(20),
-        allowNull: true,
+        allowNull: true
       },
       dva: {
         type: DataTypes.STRING(20),
-        allowNull: true,
+        allowNull: true
       },
       dvaType: {
         type: DataTypes.ENUM('GOLD', 'SILVER', 'ORANGE'),
-        defaultValue: 'ORANGE',
+        defaultValue: 'ORANGE'
       },
       legacy: {
         type: DataTypes.JSONB,
-        defaultValue: {},
-      },
+        defaultValue: {}
+      }
     },
     {
       timestamps: true,
@@ -109,22 +109,29 @@ module.exports = function (sequelize, DataTypes) {
           instance.lastName = instance.lastName.toLowerCase();
           instance.email = instance.email.toLowerCase();
           instance.dvaType = instance.dvaType.toUpperCase();
-        },
-      },
-    },
+        }
+      }
+    }
   );
 
-  patient.associate = ({ user }) => {
+  patient.associate = ({ user, event }) => {
     patient.consultant = patient.belongsTo(user, {
       as: 'consultant',
       foreignKey: {
         fieldName: 'consultantId',
         allowNull: false,
         validate: {
-          isConsultant: validateRole(user, 'CONSULTANT'),
-        },
+          isConsultant: validateRole(user, 'CONSULTANT')
+        }
       },
-      onDelete: 'restrict',
+      onDelete: 'restrict'
+    });
+
+    patient.events = patient.hasMany(event, {
+      foreignKey: {
+        allowNull: false
+      },
+      onDelete: 'restrict'
     });
   };
   return patient;

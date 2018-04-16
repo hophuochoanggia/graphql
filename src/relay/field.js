@@ -18,4 +18,11 @@ field.userFieldNoPwd = attributeFields(models.user, {
   exclude: ['id', 'createdAt', 'updatedAt', 'password'],
   cache
 });
+
+field.userFieldPublic = attributeFields(models.user, {
+  allowNull: true,
+  exclude: ['id', 'createdAt', 'updatedAt', 'password', 'username'],
+  cache
+});
+
 module.exports = field;

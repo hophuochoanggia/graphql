@@ -10,7 +10,7 @@ export default async models => {
     firstName: 'Gia',
     lastName: 'Ho',
     email: 'hoanggia@gmail.com',
-    role: 'SUPERADMIN',
+    role: 'SUPERADMIN'
   });
 
   data.users[1] = await models.user.create({
@@ -19,7 +19,7 @@ export default async models => {
     firstName: 'Gia',
     lastName: 'Ho',
     email: 'hoanggia@gmail.com',
-    role: 'ADMIN',
+    role: 'ADMIN'
   });
 
   data.users[2] = await models.user.create({
@@ -28,7 +28,7 @@ export default async models => {
     firstName: 'Gia',
     lastName: 'Ho',
     email: 'hoanggia@gmail.com',
-    role: 'CONSULTANT',
+    role: 'CONSULTANT'
   });
 
   data.users[3] = await models.user.create({
@@ -37,7 +37,7 @@ export default async models => {
     firstName: 'Gia',
     lastName: 'Ho',
     email: 'hoanggia@gmail.com',
-    role: 'DOCTOR',
+    role: 'DOCTOR'
   });
 
   data.users[4] = await models.user.create({
@@ -46,7 +46,7 @@ export default async models => {
     firstName: 'Gia',
     lastName: 'Ho',
     email: 'hoanggia@gmail.com',
-    role: 'SPECIALIST',
+    role: 'SPECIALIST'
   });
 
   data.users[5] = await models.user.create({
@@ -55,32 +55,59 @@ export default async models => {
     firstName: 'Gia',
     lastName: 'Ho',
     email: 'hoanggia@gmail.com',
-    role: 'DENTIST',
+    role: 'DENTIST'
   });
 
   data.eventType = await models.eventType.create({
     name: 'study',
     description: 'study type',
     metadata: {
-      date: 'string',
-    },
+      date: 'string'
+    }
   });
-  data.patient = await models.patient.create({
+
+  data.reason = await models.reason.create({
+    description: 'old'
+  });
+
+  data.patient = [];
+  data.patient[0] = await models.patient.create({
     birthday: new Date(),
     firstName: 'patient',
     lastName: 'patient',
     email: 'hoanggia@gmail.com',
-    consultantId: data.users[2].id,
+    consultantId: data.users[2].id
   });
 
-  data.event = await models.event.create({
+  data.patient[1] = await models.patient.create({
+    birthday: new Date(),
+    firstName: 'patient',
+    lastName: 'patient',
+    email: 'hoanggia@gmail.com',
+    consultantId: data.users[2].id
+  });
+  data.event = [];
+  data.event[0] = await models.event.create({
     typeId: data.eventType.id,
-    date: new Date(),
-    patientId: data.patient.id,
+    date: '2018-04-13',
+    patientId: data.patient[0].id,
     data: {},
     doctorId: data.users[3].id,
     requestingSpecialistId: data.users[4].id,
+    inactiveReasonId: 1
   });
 
+  data.event[1] = await models.event.create({
+    typeId: data.eventType.id,
+    date: '2018-04-13',
+    patientId: data.patient[1].id,
+    data: {},
+    doctorId: data.users[3].id,
+    requestingSpecialistId: data.users[4].id,
+    inactiveReasonId: 1
+  });
+
+  await data.event[1].addUser(3, { through: { role: 'DOCTOR' } });
+  await data.event[1].addUser(4, { through: { role: 'REQUESTING SPECIALIST' } });
   return data;
 };

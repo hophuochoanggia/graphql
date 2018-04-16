@@ -29,7 +29,7 @@ describe('Sequelize', () => {
         email,
         email2,
         password,
-        role,
+        role
       } = await models.user.create({
         username: 'HOANGGIA',
         password: '12345',
@@ -37,7 +37,7 @@ describe('Sequelize', () => {
         lastName: 'Ho',
         email: 'TEST@TEST.COM',
         email2: 'TEST@TEST.COM',
-        role: 'consultant',
+        role: 'consultant'
       });
       const compare = await comparePwd('12345', password);
       expect(username).toBe('hoanggia');
@@ -58,7 +58,7 @@ describe('Sequelize', () => {
           lastName: 'Ho',
           email: 'TEST@TEST.COM',
           email2: 'TEST@TEST.COM',
-          role: 'consultant',
+          role: 'consultant'
         })
         .catch(({ errors }) => {
           expect(errors[0].message).toBe('User already exist');
@@ -74,7 +74,7 @@ describe('Sequelize', () => {
     test('Able to include patient in user', async () => {
       const { patients } = await models.user.find({
         where: { username: 'consultant' },
-        include: models.patient,
+        include: models.patient
       });
       expect(patients.length >= 1).toBeTruthy();
     });
@@ -97,7 +97,7 @@ describe('Sequelize', () => {
         firstName: 'TEST',
         lastName: 'TEST',
         email: 'TEST@TEST.COM',
-        consultantId: data.users[2].id,
+        consultantId: data.users[2].id
       });
       expect(firstName).toBe('test');
       expect(lastName).toBe('test');
@@ -107,7 +107,7 @@ describe('Sequelize', () => {
     test('Able to include consultant in patient', async () => {
       const { consultant } = await models.patient.find({
         where: { firstName: 'patient' },
-        include: { model: models.user, as: 'consultant' },
+        include: { model: models.user, as: 'consultant' }
       });
       expect(consultant).not.toBeNull();
     });
@@ -119,10 +119,10 @@ describe('Sequelize', () => {
           lastName: 'patient',
           birthday: '2007-12-03',
           email: 'hoanggia@gmail.com',
-          consultantId: 2,
+          consultantId: 2
         })
         .catch(({ errors }) => {
-          expect(errors[0].message).toBe('User is not a consultant');
+          expect(errors[0].message).toBe('User is not a CONSULTANT');
         });
     });
 
@@ -133,7 +133,7 @@ describe('Sequelize', () => {
           lastName: 'patient',
           birthday: '2007-12-03',
           email: 'hoanggia@gmail.com',
-          consultantId: 3,
+          consultantId: 3
         })
         .then(instance => {
           expect(instance).toBeDefined();
@@ -155,7 +155,7 @@ describe('Sequelize', () => {
         .create({
           name: 'test',
           metadata: {},
-          description: 'study',
+          description: 'study'
         })
         .catch(({ name }) => {
           expect(name).toBe('test');
@@ -183,17 +183,17 @@ describe('Sequelize', () => {
             {
               typeId: data.eventType.id,
               date: new Date(),
-              patientId: data.patient.id,
+              patientId: 1,
               data: {},
               doctorId: data.users[3].id,
-              requestingSpecialistId: data.users[4].id,
+              requestingSpecialistId: data.users[4].id
             },
-            transaction,
+            transaction
           );
           await event.addUser(event.doctorId, { through: { role: 'DOCTOR' }, transaction });
           return event.addUser(event.reportingSpecialistId, {
-            through: { role: 'REPORTING SPECIALIST' },
-            transaction,
+            through: { role: 'REQUESTING SPECIALIST' },
+            transaction
           });
         });
       } catch (error) {
