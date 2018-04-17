@@ -1,12 +1,14 @@
-import { GraphQLObjectType } from 'graphql';
+import { GraphQLInt, GraphQLEnumType, GraphQLObjectType } from 'graphql';
 import { globalIdField } from 'graphql-relay';
-import { resolver } from 'graphql-sequelize';
-import { event, patient, eventType, reason } from '../../models';
+import { resolver, relay } from 'graphql-sequelize';
+import { event, patient, eventType as _eventType, reason } from '../../models';
 import { eventField, eventTypeField, reasonField, patientField } from '../field';
 import node from './node';
 
 const { nodeInterface } = node;
-export default new GraphQLObjectType({
+const { sequelizeConnection } = relay;
+
+const eventType = new GraphQLObjectType({
   name: event.name,
   fields: {
     id: globalIdField(event.name),
@@ -26,7 +28,7 @@ export default new GraphQLObjectType({
       type: new GraphQLObjectType({
         name: 'typeOfEvent',
         fields: {
-          id: globalIdField(eventType.name),
+          id: globalIdField(_eventType.name),
           ...eventTypeField
         },
         interfaces: [nodeInterface]
@@ -46,4 +48,33 @@ export default new GraphQLObjectType({
     }
   },
   interfaces: [nodeInterface]
+});
+
+export default sequelizeConnection({
+  name: 'event',
+  nodeType: eventType,
+  target: event,
+  connectionFields: {
+    total: {
+      type: GraphQLInt,
+      resolve: () => event.count()
+    }
+  },
+  edgeFields: {
+    index: {
+      type: GraphQLInt,
+      resolve: edge =>
+        Buffer.from(edge.cursor, 'base64')
+          .toString('ascii')
+          .split('$')
+          .pop()
+    }
+  },
+  orderBy: new GraphQLEnumType({
+    name: 'eventOrderBy',
+    values: {
+      id: { value: ['id', 'ASC'] }
+    }
+  }),
+  where: (key, value) => ({ [key]: value })
 });

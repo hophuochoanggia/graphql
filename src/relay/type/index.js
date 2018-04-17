@@ -8,7 +8,7 @@ const type = {
   userType,
   patientType,
   reasonType,
-  eventType,
-  eventTypeType
+  eventTypeType,
+  eventType
 };
 module.exports = type;

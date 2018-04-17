@@ -13,7 +13,7 @@ export const createEvent = mutationWithClientMutationId({
   },
   outputFields: () => ({
     response: {
-      type: eventType,
+      type: eventType.nodeType,
       resolve: payload => payload.dataValues
     }
   }),
@@ -54,7 +54,7 @@ export const editEventById = mutationWithClientMutationId({
   },
   outputFields: () => ({
     response: {
-      type: eventType,
+      type: eventType.nodeType,
       resolve: payload => payload.dataValues
     }
   }),

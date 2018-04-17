@@ -26,8 +26,8 @@ Object.keys(db).forEach(modelName => {
     db[modelName].associate(db);
   }
 });
+
 db.sequelize = sequelize;
-db.Sequelize = Sequelize;
 if (env === 'dev') {
   db.sequelize.sync({ force: true, logging: false }).then(() => {
     const { user, patient } = db.sequelize.models;

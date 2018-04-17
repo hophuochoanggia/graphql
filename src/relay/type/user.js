@@ -9,12 +9,12 @@ import { patientField, userFieldNoPwd } from '../field';
 
 const { nodeInterface } = node;
 const { sequelizeConnection } = relay;
-const { user, Sequelize } = models;
-const { Op } = Sequelize;
+const { user, sequelize } = models;
+const { Op } = sequelize;
 
 const userPatientConnection = sequelizeConnection({
   name: 'userPatient',
-  nodeType: patientType,
+  nodeType: patientType.nodeType,
   target: user.patients,
   orderBy: new GraphQLEnumType({
     name: 'UserPatientOrderBy',
@@ -36,7 +36,7 @@ const userPatientConnection = sequelizeConnection({
 
 const userEventConnection = sequelizeConnection({
   name: 'userEvent',
-  nodeType: eventType,
+  nodeType: eventType.nodeType,
   target: user.events,
   orderBy: new GraphQLEnumType({
     name: 'UserEventOrderBy',
@@ -44,7 +44,6 @@ const userEventConnection = sequelizeConnection({
       AGE: { value: ['createdAt', 'DESC'] }
     }
   }),
-  // where: (key, value) => ({ [key]: { value } }),
   connectionFields: {
     total: {
       type: GraphQLInt,
@@ -55,7 +54,7 @@ const userEventConnection = sequelizeConnection({
   }
 });
 
-export default new GraphQLObjectType({
+const userType = new GraphQLObjectType({
   name: user.name,
   fields: {
     id: globalIdField(user.name),
@@ -77,4 +76,42 @@ export default new GraphQLObjectType({
     }
   },
   interfaces: [nodeInterface]
+});
+
+export default sequelizeConnection({
+  name: 'user',
+  nodeType: userType,
+  target: user,
+  connectionFields: {
+    total: {
+      type: GraphQLInt,
+      resolve: () => user.count()
+    }
+  },
+  edgeFields: {
+    index: {
+      type: GraphQLInt,
+      resolve: edge =>
+        Buffer.from(edge.cursor, 'base64')
+          .toString('ascii')
+          .split('$')
+          .pop()
+    }
+  },
+  orderBy: new GraphQLEnumType({
+    name: 'UserOrderBy',
+    values: {
+      firstName: { value: ['firstName', 'ASC'] },
+      lastName: { value: ['lastName', 'ASC'] }
+    }
+  }),
+  where: (key, value) => {
+    if (key === 'name') {
+      return {
+        name: { [Op.like]: `%${value}%` }
+      };
+    }
+
+    return { [key]: value };
+  }
 });

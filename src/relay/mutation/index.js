@@ -22,7 +22,6 @@ modelName.map(name => {
     // event need custom mutation to handle through model
     const createMutationName = `create${capitalize(name)}`;
     const editMutationName = `edit${capitalize(name)}ById`;
-
     mutations[createMutationName] = mutationWithClientMutationId({
       name: createMutationName,
       inputFields: {
@@ -30,7 +29,7 @@ modelName.map(name => {
       },
       outputFields: () => ({
         response: {
-          type: type[`${name}Type`],
+          type: type[`${name}Type`].nodeType,
           resolve: payload => payload.dataValues
         }
       }),
@@ -50,7 +49,7 @@ modelName.map(name => {
       },
       outputFields: () => ({
         response: {
-          type: type[`${name}Type`],
+          type: type[`${name}Type`].nodeType,
           resolve: payload => payload.dataValues
         }
       }),

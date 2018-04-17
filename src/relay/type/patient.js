@@ -1,17 +1,18 @@
 import { GraphQLEnumType, GraphQLObjectType, GraphQLInt } from 'graphql';
 import { globalIdField } from 'graphql-relay';
 import { resolver, relay } from 'graphql-sequelize';
-import { user, patient } from '../../models';
+import { user, patient, sequelize } from '../../models';
 import { userFieldPublic, patientField } from '../field';
 import eventType from './event';
 import node from './node';
 
 const { nodeInterface } = node;
 const { sequelizeConnection } = relay;
+const { Op } = sequelize;
 
 const patientEventConnection = sequelizeConnection({
   name: 'patientEvent',
-  nodeType: eventType,
+  nodeType: eventType.nodeType,
   target: patient.events,
   orderBy: new GraphQLEnumType({
     name: 'PatientEventOrderBy',
@@ -30,10 +31,10 @@ const patientEventConnection = sequelizeConnection({
   }
 });
 
-export default new GraphQLObjectType({
+const patientType = new GraphQLObjectType({
   name: patient.name,
   fields: {
-    id: globalIdField(user.name),
+    id: globalIdField(patient.name),
     ...patientField,
     consultant: {
       type: new GraphQLObjectType({
@@ -55,4 +56,42 @@ export default new GraphQLObjectType({
     }
   },
   interfaces: [nodeInterface]
+});
+
+export default sequelizeConnection({
+  name: 'patient',
+  nodeType: patientType,
+  target: patient,
+  connectionFields: {
+    total: {
+      type: GraphQLInt,
+      resolve: () => patient.count()
+    }
+  },
+  edgeFields: {
+    index: {
+      type: GraphQLInt,
+      resolve: edge =>
+        Buffer.from(edge.cursor, 'base64')
+          .toString('ascii')
+          .split('$')
+          .pop()
+    }
+  },
+  orderBy: new GraphQLEnumType({
+    name: 'PatientOrderBy',
+    values: {
+      firstName: { value: ['firstName', 'ASC'] },
+      lastName: { value: ['lastName', 'ASC'] }
+    }
+  }),
+  where: (key, value) => {
+    if (key === 'name') {
+      return {
+        name: { [Op.like]: `%${value}%` }
+      };
+    }
+
+    return { [key]: value };
+  }
 });
