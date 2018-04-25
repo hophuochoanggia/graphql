@@ -5,7 +5,7 @@ import models from '../../models';
 import patientType from './patient';
 import eventType from './event';
 import node from './node';
-import { patientField, userFieldNoPwd } from '../field';
+import { patientField, userField } from '../field';
 
 const { nodeInterface } = node;
 const { sequelizeConnection } = relay;
@@ -53,12 +53,15 @@ const userEventConnection = sequelizeConnection({
     }
   }
 });
-
 const userType = new GraphQLObjectType({
   name: user.name,
   fields: {
     id: globalIdField(user.name),
-    ...userFieldNoPwd,
+    _id: {
+      type: GraphQLInt,
+      resolve: instance => instance.id
+    },
+    ...userField,
     patients: {
       type: userPatientConnection.connectionType,
       args: {

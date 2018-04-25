@@ -1,18 +1,21 @@
-import { GraphQLString, GraphQLInt, GraphQLNonNull } from 'graphql';
-// import { resolver } from 'graphql-sequelize';
+import { GraphQLInt, GraphQLNonNull } from 'graphql';
 import node from '../type/node';
 import type from '../type';
+import field from '../field';
 import { modelName } from '../../config';
-// import models from '../../models';
 import { resolverWithRole } from '../../utils/resolverWithRole';
+
+import viewer from './viewer';
 
 const { nodeField } = node;
 const queries = {
-  node: nodeField
+  node: nodeField,
+  viewer
 };
 // eslint-disable-next-line
 modelName.map(name => {
   const modelType = type[`${name}Type`];
+  const modelField = field[`${name}Field`];
   if (modelType) {
     queries[name] = {
       type: modelType.connectionType,
@@ -21,23 +24,17 @@ modelName.map(name => {
           type: new GraphQLNonNull(GraphQLInt)
         }
       },
-      resolve: (options, args, ctx, info) => modelType.resolve(options, args, ctx, info)
+      resolve: (options, args, ctx, info) =>
+        resolverWithRole(name, ctx.role, {}, () => modelType.resolve(options, args, ctx, info))
     };
     queries[`${name}s`] = {
       type: modelType.connectionType,
       args: {
         ...modelType.connectionArgs,
-        name: {
-          description: 'Fuzzy-matched name of user',
-          type: GraphQLString
-        }
+        ...modelField
       },
       resolve: (options, args, ctx, info) =>
-        // options.role = ctx.role;
-        modelType.resolve(options, args, ctx, info)
-
-      // resolve: (options, args, ctx, info) =>
-      //  resolverWithRole(name, ctx.role, {}, () => modelType.resolve(options, args, ctx, info))
+        resolverWithRole(name, ctx.role, {}, () => modelType.resolve(options, args, ctx, info))
     };
   }
 });

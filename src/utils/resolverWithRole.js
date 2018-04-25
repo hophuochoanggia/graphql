@@ -1,8 +1,9 @@
 const acl = {
-  user: ['OWNER', 'SUPERADMIN', 'ADMIN'],
+  user: ['SUPERADMIN', 'ADMIN'],
   users: ['SUPERADMIN', 'ADMIN'],
   createUser: ['SUPERADMIN', 'ADMIN'],
-  editUserById: ['LEVEL', 'OWNER'],
+  editUserById: ['LEVEL', 'SUPERADMIN', 'ADMIN'],
+  changePwd: ['LEVEL'],
 
   patient: ['SUPERADMIN', 'ADMIN'],
   patients: ['SUPERADMIN', 'ADMIN'],
@@ -31,17 +32,7 @@ const level = {
 };
 export const roles = ['SUPERADMIN', 'ADMIN', 'CONSULTANT', 'DOCTOR', 'SPECIALIST', 'DENTIST'];
 export const roleResolver = (methodName, role) => acl[methodName].indexOf(role) > -1;
-
-export const resolverWithRole = (
-  methodName,
-  role,
-  {
-    actorId,
-    model,
-    instance // instsance is retrived in resolve function (id === instance.id)
-  },
-  resolver
-) => {
+export const resolverWithRole = (methodName, role, { actorId, model, instance }, resolver) => {
   const rule = acl[methodName];
   if (!rule) return Promise.reject(new Error('Unauthorized')); // deny if can't find rule
 

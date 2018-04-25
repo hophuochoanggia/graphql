@@ -26,8 +26,8 @@ Object.keys(db).forEach(modelName => {
     db[modelName].associate(db);
   }
 });
-
 db.sequelize = sequelize;
+db.Sequelize = Sequelize;
 if (env === 'dev') {
   db.sequelize.sync({ force: true, logging: false }).then(() => {
     const { user, patient } = db.sequelize.models;
@@ -38,7 +38,9 @@ if (env === 'dev') {
         firstName: 'superadmin',
         lastName: 'Ho',
         email: 'hoanggia@gmail.com',
-        role: 'superadmin'
+        role: 'superadmin',
+        address: '6233 Australia',
+        workPhone: '123456'
       })
       .then(() => {
         user
@@ -48,7 +50,9 @@ if (env === 'dev') {
             firstName: 'consultant',
             lastName: 'Ho',
             email: 'hoanggia@gmail.com',
-            role: 'consultant'
+            role: 'consultant',
+            address: '6233 Australia',
+            workPhone: '123456'
           })
           .then(consultant => {
             patient.create({

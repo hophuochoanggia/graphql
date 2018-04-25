@@ -14,7 +14,6 @@ beforeAll(async () => {
 const roles = ['SUPERADMIN', 'ADMIN', 'CONSULTANT', 'DOCTOR', 'SPECIALIST', 'DENTIST'];
 describe('Sequelize', () => {
   describe('User Model', () => {
-    /*
     test('Test login', async () => {
       const mutation = `
         mutation {
@@ -76,7 +75,31 @@ describe('Sequelize', () => {
         const { date } = view(edgePath, view(edgePath, result.data.user).events);
         expect(date).toBe('2018-04-13');
       });
-    }); */
+    });
+    describe('changePwd ACL', () => {
+      const allowedRole = ['SUPERADMIN', 'ADMIN'];
+      roles.map(role =>
+        test(`As ${role}`, async () => {
+          const mutation = `
+            mutation {
+              generatePwd (input: {
+                id: 4
+              }) {
+                response
+              }
+            }
+          `;
+          const result = await graphql(schema, mutation, {}, { role });
+          if (allowedRole.includes(role)) {
+            const { response } = result.data.generatePwd;
+            expect(response).toBeTruthy();
+          } else {
+            const { message } = result.errors[0];
+            expect(message).toBe('Unauthorized');
+          }
+        }));
+    });
+
     describe('createUser ACL', () => {
       const allowedRole = ['SUPERADMIN', 'ADMIN'];
       roles.map(role =>
@@ -85,7 +108,6 @@ describe('Sequelize', () => {
             mutation {
               createUser(input: {
                 username: "${Math.random()}",
-                password:"12345",
                 firstName:"Gia",
                 lastName:"Ho",
                 email:"hoanggia@gmail.com"
@@ -105,9 +127,9 @@ describe('Sequelize', () => {
             expect(message).toBe('Unauthorized');
           }
         }));
-    }); /*
+    });
     describe('editUserById ACL', () => {
-      const allowedRole = ['SUPERADMIN', 'ADMIN', 'CONSULTANT']; // Consultant is owner
+      const allowedRole = ['SUPERADMIN', 'ADMIN'];
       roles.map((role, index) =>
         test(`As ${role}`, async () => {
           const mutation = `
@@ -127,7 +149,7 @@ describe('Sequelize', () => {
           const result = await graphql(schema, mutation, {}, { role, id: data.users[index].id });
           if (allowedRole.includes(role)) {
             const { response } = result.data.editUserById;
-            expect(response.firstName).toBe('change');
+            expect(response.firstName).toBe('Change');
           } else {
             const { message } = result.errors[0];
             expect(message).toBe('Unauthorized');
@@ -135,60 +157,92 @@ describe('Sequelize', () => {
         }));
     });
 
-    */
-    // describe('query list user ACL', () => {
-    //  const allowedRole = ['SUPERADMIN', 'ADMIN'];
-    //  roles.map((role, index) =>
-    //    test(`As ${role}`, async () => {
-    //      const query = `
-    //        {
-    //          users {
-    //            edges {
-    //              node {
-    //                firstName
-    //              }
-    //            }
-    //          }
-    //        }
-    //      `;
-    //      const result = await graphql(schema, query, {}, { role, id: data.users[index].id });
-    //      if (allowedRole.includes(role)) {
-    //        const { firstName } = view(edgePath, result.data.users);
-    //        expect(firstName).toBe('gia');
-    //      } else {
-    //        const { message } = result.errors[0];
-    //        expect(message).toBe('Unauthorized');
-    //      }
-    //    }));
-    // });
-    // describe('query user ACL', () => {
-    //  const allowedRole = ['SUPERADMIN', 'ADMIN', 'OWNER'];
-    //  roles.map((role, index) =>
-    //    test(`As ${role}`, async () => {
-    //      const query = `
-    //        {
-    //          user(id:3) {
-    //            edges {
-    //              node {
-    //                username
-    //                firstName
-    //              }
-    //            }
-    //          }
-    //        }
-    //      `;
-    //      const result = await graphql(schema, query, {}, { role, id: data.users[index].id });
-    //      if (allowedRole.includes(role)) {
-    //        const { username } = view(edgePath, result.data.user);
-    //        expect(username).toBe('consultant');
-    //      } else {
-    //        const { message } = result.errors[0];
-    //        expect(message).toBe('Unauthorized');
-    //      }
-    //    }));
-    // });
+    describe('query list user ACL', () => {
+      const allowedRole = ['SUPERADMIN', 'ADMIN'];
+      roles.map((role, index) =>
+        test(`As ${role}`, async () => {
+          const query = `
+            {
+              users {
+                edges {
+                  node {
+                    firstName
+                  }
+                }
+              }
+            }
+          `;
+          const result = await graphql(schema, query, {}, { role, id: data.users[index].id });
+          if (allowedRole.includes(role)) {
+            const { firstName } = view(edgePath, result.data.users);
+            expect(firstName).toBe('Change');
+          } else {
+            const { message } = result.errors[0];
+            expect(message).toBe('Unauthorized');
+          }
+        }));
+    });
+    describe('query user ACL', () => {
+      const allowedRole = ['SUPERADMIN', 'ADMIN', 'OWNER'];
+      roles.map((role, index) =>
+        test(`As ${role}`, async () => {
+          const query = `
+            {
+              user(id:3) {
+                edges {
+                  node {
+                    username
+                    firstName
+                  }
+                }
+              }
+            }
+          `;
+          const result = await graphql(schema, query, {}, { role, id: data.users[index].id });
+          if (allowedRole.includes(role)) {
+            const { username } = view(edgePath, result.data.user);
+            expect(username).toBe('consultant');
+          } else {
+            const { message } = result.errors[0];
+            expect(message).toBe('Unauthorized');
+          }
+        }));
+    });
+
+    describe('viewer', () => {
+      test('viewer query', async () => {
+        const query = `
+          {
+            viewer {
+              edges {
+                node {
+                  username
+                }
+              }
+            }
+          }
+        `;
+        const result = await graphql(schema, query, {}, { id: data.users[0].id });
+        const { username } = view(edgePath, result.data.viewer);
+        expect(username).toBe('superadmin');
+      });
+
+      test('viewer edit', async () => {
+        const query = `
+          mutation {
+            editViewer(input: {data: {firstName: "editViewer"}}) {
+              response{
+                firstName
+              }
+            }
+          }
+        `;
+        const result = await graphql(schema, query, {}, { id: data.users[0].id });
+        const { firstName } = result.data.editViewer.response;
+        expect(firstName).toBe('EditViewer');
+      });
+    });
   });
-  /*
   describe('Patient Model', () => {
     describe('query event of a patient ACL', () => {
       test('event that belong to a user', async () => {
@@ -265,7 +319,7 @@ describe('Sequelize', () => {
           const result = await graphql(schema, query, {}, { role, id: data.users[index].id });
           if (allowedRole.includes(role)) {
             const { lastName } = view(edgePath, result.data.patient).consultant;
-            expect(lastName).toBe('ho');
+            expect(lastName).toBe('Ho');
           } else {
             const { message } = result.errors[0];
             expect(message).toBe('Unauthorized');
@@ -499,5 +553,5 @@ describe('Sequelize', () => {
           }
         }));
     });
-  }); */
+  });
 });

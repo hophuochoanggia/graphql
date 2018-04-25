@@ -12,6 +12,10 @@ const eventTypeType = new GraphQLObjectType({
   name: eventType.name,
   fields: {
     id: globalIdField(eventType.name),
+    _id: {
+      type: GraphQLInt,
+      resolve: instance => instance.id
+    },
     ...eventTypeField
   },
   interfaces: [nodeInterface]

@@ -35,6 +35,10 @@ const patientType = new GraphQLObjectType({
   name: patient.name,
   fields: {
     id: globalIdField(patient.name),
+    _id: {
+      type: GraphQLInt,
+      resolve: instance => instance.id
+    },
     ...patientField,
     consultant: {
       type: new GraphQLObjectType({

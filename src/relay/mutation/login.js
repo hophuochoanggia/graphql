@@ -12,13 +12,13 @@ export default mutationWithClientMutationId({
   name: 'login',
   inputFields: {
     username: { type: GraphQLString },
-    password: { type: GraphQLString },
+    password: { type: GraphQLString }
   },
   outputFields: () => ({
     token: {
       type: GraphQLString,
-      description: 'JWT token',
-    },
+      description: 'JWT token'
+    }
   }),
   mutateAndGetPayload: async input => {
     const { username, password } = input;
@@ -29,11 +29,11 @@ export default mutationWithClientMutationId({
     const payload = {
       id: user.id,
       user: user.username,
-      role: user.role,
+      role: user.role
     };
     const token = jwt.sign(payload, config.SECRET, {
-      expiresIn,
+      expiresIn
     });
     return Promise.resolve({ message: 'Success', token });
-  },
+  }
 });

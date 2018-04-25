@@ -1,5 +1,13 @@
+import { randomBytes } from 'crypto';
 import { cryptPwd } from '../utils/cryptPassword';
-import { resolverWithRole } from '../utils/resolverWithRole';
+import capitalize from '../utils/capitalize';
+
+const env = process.env.NODE_ENV || 'dev';
+const generatePwd = () => {
+  const buffer = randomBytes(8);
+  const base64 = buffer.toString('base64');
+  return base64.slice(0, -1);
+};
 
 module.exports = function (sequelize, DataTypes) {
   const user = sequelize.define(
@@ -27,7 +35,7 @@ module.exports = function (sequelize, DataTypes) {
       },
       password: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
         validate: {
           len: {
             args: 5,
@@ -100,10 +108,6 @@ module.exports = function (sequelize, DataTypes) {
           }
         }
       },
-      isEmailVerified: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
-      },
       email2: {
         type: DataTypes.STRING(50),
         defaultValue: null,
@@ -116,10 +120,6 @@ module.exports = function (sequelize, DataTypes) {
             msg: 'Email address must be valid'
           }
         }
-      },
-      isEmail2Verified: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
       },
       providerNo: {
         type: DataTypes.STRING(20),
@@ -145,25 +145,46 @@ module.exports = function (sequelize, DataTypes) {
       timestamps: true,
       freezeTableName: true,
       hooks: {
-        beforeSave: instance => {
-          instance.username = instance.username.toLowerCase();
-          instance.firstName = instance.firstName.toLowerCase();
-          instance.lastName = instance.lastName.toLowerCase();
-          instance.email = instance.email.toLowerCase();
-          instance.email2 = instance.email2 ? instance.email2.toLowerCase() : null;
-          instance.role = instance.role.toUpperCase();
+        beforeCreate: instance => {
+          if (env === 'prod') {
+            instance.password = generatePwd();
+          } else {
+            instance.password = '12345';
+          }
           return cryptPwd(instance.password).then(success => {
             instance.password = success;
           });
         },
-        beforeFind: options => {
-          console.log(options);
-          // resolverWithRole('user', options.graphqlContext.role, {}, console.log);
-          return options;
+        beforeSave: instance => {
+          instance.username = instance.username.toLowerCase();
+          instance.firstName = capitalize(instance.firstName);
+          instance.lastName = capitalize(instance.lastName);
+          instance.email = instance.email.toLowerCase();
+          instance.email2 = instance.email2 ? instance.email2.toLowerCase() : null;
+          instance.role = instance.role.toUpperCase();
         }
       }
     }
   );
+
+  user.prototype.generatePwd = async function () {
+    const password = generatePwd();
+    try {
+      const hash = await cryptPwd(password);
+      return this.update({ password: hash });
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  user.prototype.setPwd = async function (password) {
+    try {
+      const hash = await cryptPwd(password);
+      return this.update({ password: hash });
+    } catch (e) {
+      throw e;
+    }
+  };
 
   user.associate = ({ event, patient, userEvent }) => {
     user.patients = user.hasMany(patient, {

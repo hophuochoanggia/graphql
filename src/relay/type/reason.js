@@ -12,6 +12,10 @@ const reasonType = new GraphQLObjectType({
   name: reason.name,
   fields: {
     id: globalIdField(reason.name),
+    _id: {
+      type: GraphQLInt,
+      resolve: instance => instance.id
+    },
     ...reasonField
   },
   interfaces: [nodeInterface]

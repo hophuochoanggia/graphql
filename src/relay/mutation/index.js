@@ -8,12 +8,16 @@ import type from '../type';
 import input from '../input';
 import field from '../field';
 import login from './login';
+import password from './password';
 import { createEvent, editEventById } from './event';
+import editViewer from './viewer';
 
 const mutations = {
   createEvent,
   editEventById,
-  login
+  login,
+  editViewer,
+  ...password
 };
 
 // eslint-disable-next-line
