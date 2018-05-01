@@ -1,8 +1,8 @@
-import { GraphQLInt, GraphQLEnumType, GraphQLObjectType } from 'graphql';
+import { GraphQLInt, GraphQLEnumType, GraphQLString, GraphQLObjectType } from 'graphql';
 import { globalIdField } from 'graphql-relay';
 import { resolver, relay } from 'graphql-sequelize';
-import { event, patient, eventType as _eventType, reason } from '../../models';
-import { eventField, eventTypeField, reasonField, patientField } from '../field';
+import { user, event, patient, eventType as _eventType, reason } from '../../models';
+import { eventField, eventTypeField, reasonField, patientField, userFieldPublic } from '../field';
 import node from './node';
 
 const { nodeInterface } = node;
@@ -39,6 +39,59 @@ const eventType = new GraphQLObjectType({
       }),
       resolve: resolver(event.type)
     },
+    prevEvent: {
+      type: new GraphQLObjectType({
+        name: 'prevEvent',
+        fields: {
+          id: globalIdField(event.name),
+          _id: {
+            type: GraphQLInt,
+            resolve: instance => instance.id
+          },
+          ...eventField
+        },
+        interfaces: [nodeInterface]
+      }),
+      resolve: resolver(event.prevEventId)
+    },
+    doctor: {
+      type: new GraphQLObjectType({
+        name: 'doctor',
+        fields: {
+          id: globalIdField(user.name),
+          _id: {
+            type: GraphQLInt,
+            resolve: instance => instance.id
+          },
+          fullName: {
+            type: GraphQLString,
+            resolve: instance => `${instance.firstName} ${instance.lastName}`
+          },
+          ...userFieldPublic
+        },
+        interfaces: [nodeInterface]
+      }),
+      resolve: resolver(event.doctorId)
+    },
+    reportingSpecialist: {
+      type: new GraphQLObjectType({
+        name: 'reportingSpecialist',
+        fields: {
+          id: globalIdField(user.name),
+          _id: {
+            type: GraphQLInt,
+            resolve: instance => instance.id
+          },
+          fullName: {
+            type: GraphQLString,
+            resolve: instance => `${instance.firstName} ${instance.lastName}`
+          },
+          ...userFieldPublic
+        },
+        interfaces: [nodeInterface]
+      }),
+      resolve: resolver(event.reportingSpecialistId)
+    },
     inactiveReason: {
       type: new GraphQLObjectType({
         name: 'inactiveReasonOfEvent',
@@ -69,9 +122,9 @@ export default sequelizeConnection({
       type: GraphQLInt,
       resolve: edge =>
         Buffer.from(edge.cursor, 'base64')
-          .toString('ascii')
-          .split('$')
-          .pop()
+        .toString('ascii')
+        .split('$')
+        .pop()
     }
   },
   orderBy: new GraphQLEnumType({
@@ -80,5 +133,7 @@ export default sequelizeConnection({
       id: { value: ['id', 'ASC'] }
     }
   }),
-  where: (key, value) => ({ [key]: value })
+  where: (key, value) => ({
+    [key]: value
+  })
 });

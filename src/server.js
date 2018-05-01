@@ -22,12 +22,12 @@ function startApp(instance, port) {
 models.sequelize
   .sync()
   .then(() => {
-    startApp(app, config.PORT);
+    startApp(app, process.env.PORT);
   })
   .catch(e => {
     throw new Error(e);
   });
-app.use('*', cors({ origin: 'http://localhost:8080' }));
+app.use('*', cors({ origin: '*' }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -42,7 +42,8 @@ app.use((req, res, next) => {
     res.status(404).send({
       error: 'Token expires'
     });
-  } else {
+  }
+  else {
     next();
   }
 });

@@ -10,7 +10,8 @@ const db = {};
 let sequelize;
 if (config.use_env_variable) {
   sequelize = new Sequelize(process.env[config.use_env_variable]);
-} else {
+}
+else {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
@@ -30,7 +31,34 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 if (env === 'dev') {
   db.sequelize.sync({ force: true, logging: false }).then(() => {
-    const { user, patient } = db.sequelize.models;
+    const { eventType, user, patient } = db.sequelize.models;
+    eventType.create({
+      name: 'study',
+      description: 'study',
+      metadata: []
+    })
+    user
+      .create({
+        username: 'test',
+        password: '12345',
+        firstName: 'test',
+        lastName: 'test',
+        email: 'hoanggia@gmail.com',
+        role: 'superadmin',
+        address: '6233 Australia',
+        workPhone: '123456'
+      });
+    user
+      .create({
+        username: 'consultant2',
+        password: '12345',
+        firstName: 'test',
+        lastName: 'test',
+        email: 'hoanggia@gmail.com',
+        role: 'consultant',
+        address: '6233 Australia',
+        workPhone: '123456'
+      });
     user
       .create({
         username: 'superadmin',

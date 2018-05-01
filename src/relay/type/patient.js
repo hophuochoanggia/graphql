@@ -1,4 +1,4 @@
-import { GraphQLEnumType, GraphQLObjectType, GraphQLInt } from 'graphql';
+import { GraphQLString, GraphQLEnumType, GraphQLObjectType, GraphQLInt } from 'graphql';
 import { globalIdField } from 'graphql-relay';
 import { resolver, relay } from 'graphql-sequelize';
 import { user, patient, sequelize } from '../../models';
@@ -20,7 +20,9 @@ const patientEventConnection = sequelizeConnection({
       AGE: { value: ['createdAt', 'DESC'] }
     }
   }),
-  where: (key, value) => ({ [key]: value }),
+  where: (key, value) => ({
+    [key]: value
+  }),
   connectionFields: {
     total: {
       type: GraphQLInt,
@@ -39,12 +41,24 @@ const patientType = new GraphQLObjectType({
       type: GraphQLInt,
       resolve: instance => instance.id
     },
+    fullName: {
+      type: GraphQLString,
+      resolve: instance => `${instance.firstName} ${instance.lastName}`
+    },
     ...patientField,
     consultant: {
       type: new GraphQLObjectType({
         name: 'consultant',
         fields: {
           id: globalIdField(user.name),
+          _id: {
+            type: GraphQLInt,
+            resolve: instance => instance.id
+          },
+          fullName: {
+            type: GraphQLString,
+            resolve: instance => `${instance.firstName} ${instance.lastName}`
+          },
           ...userFieldPublic
         },
         interfaces: [nodeInterface]
@@ -77,9 +91,9 @@ export default sequelizeConnection({
       type: GraphQLInt,
       resolve: edge =>
         Buffer.from(edge.cursor, 'base64')
-          .toString('ascii')
-          .split('$')
-          .pop()
+        .toString('ascii')
+        .split('$')
+        .pop()
     }
   },
   orderBy: new GraphQLEnumType({
@@ -92,10 +106,14 @@ export default sequelizeConnection({
   where: (key, value) => {
     if (key === 'name') {
       return {
-        name: { [Op.like]: `%${value}%` }
+        name: {
+          [Op.like]: ` % $ { value } % `
+        }
       };
     }
 
-    return { [key]: value };
+    return {
+      [key]: value
+    };
   }
 });

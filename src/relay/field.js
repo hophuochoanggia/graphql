@@ -21,7 +21,13 @@ modelName.map(name => {
     cache
   });
 });
-// To show in connection with other model (consultant)
+
+field.eventField = attributeFields(models.event, {
+  allowNull: true,
+  exclude: ['id', 'createdAt', 'updatedAt', 'patientId', 'inactiveReasonId'],
+  cache
+});
+//To show in connection with other model(consultant)
 field.userFieldPublic = attributeFields(models.user, {
   allowNull: true,
   exclude: ['id', 'createdAt', 'updatedAt', 'password', 'username'],

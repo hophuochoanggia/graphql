@@ -1,9 +1,9 @@
 import validateRole from '../utils/validateRole';
+import capitalize from '../utils/capitalize';
 
-module.exports = function (sequelize, DataTypes) {
+module.exports = function(sequelize, DataTypes) {
   const patient = sequelize.define(
-    'patient',
-    {
+    'patient', {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -93,22 +93,20 @@ module.exports = function (sequelize, DataTypes) {
       },
       dvaType: {
         type: DataTypes.ENUM('GOLD', 'SILVER', 'ORANGE'),
-        defaultValue: 'ORANGE'
+        allowNull: true
       },
       legacy: {
         type: DataTypes.JSONB,
         defaultValue: {}
       }
-    },
-    {
+    }, {
       timestamps: true,
       freezeTableName: true,
       hooks: {
         beforeSave: instance => {
-          instance.firstName = instance.firstName.toLowerCase();
-          instance.lastName = instance.lastName.toLowerCase();
+          instance.firstName = capitalize(instance.firstName);
+          instance.lastName = capitalize(instance.lastName);
           instance.email = instance.email.toLowerCase();
-          instance.dvaType = instance.dvaType.toUpperCase();
         }
       }
     }

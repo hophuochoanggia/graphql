@@ -19,4 +19,11 @@ modelName.map(name => {
     })
   });
 });
+
+input.eventInput = new GraphQLInputObjectType({
+  name: 'eventInput',
+  fields: () => ({
+    ...field.eventField
+  })
+});
 module.exports = input;

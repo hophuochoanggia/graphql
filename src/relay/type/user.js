@@ -1,4 +1,4 @@
-import { GraphQLObjectType, GraphQLInt, GraphQLEnumType } from 'graphql';
+import { GraphQLString, GraphQLObjectType, GraphQLInt, GraphQLEnumType } from 'graphql';
 import { globalIdField } from 'graphql-relay';
 import { relay } from 'graphql-sequelize';
 import models from '../../models';
@@ -23,7 +23,9 @@ const userPatientConnection = sequelizeConnection({
       LASTNAME: { value: ['lastName', 'ASC'] }
     }
   }),
-  where: (key, value) => ({ [key]: { [Op.like]: `%${value}%` } }),
+  where: (key, value) => ({
+    [key]: {
+      [Op.like]: `%${value}%` } }),
   connectionFields: {
     total: {
       type: GraphQLInt,
@@ -62,6 +64,10 @@ const userType = new GraphQLObjectType({
       resolve: instance => instance.id
     },
     ...userField,
+    fullName: {
+      type: GraphQLString,
+      resolve: instance => `${instance.firstName} ${instance.lastName}`
+    },
     patients: {
       type: userPatientConnection.connectionType,
       args: {
@@ -96,9 +102,9 @@ export default sequelizeConnection({
       type: GraphQLInt,
       resolve: edge =>
         Buffer.from(edge.cursor, 'base64')
-          .toString('ascii')
-          .split('$')
-          .pop()
+        .toString('ascii')
+        .split('$')
+        .pop()
     }
   },
   orderBy: new GraphQLEnumType({
@@ -111,10 +117,12 @@ export default sequelizeConnection({
   where: (key, value) => {
     if (key === 'name') {
       return {
-        name: { [Op.like]: `%${value}%` }
+        name: {
+          [Op.like]: `%${value}%` }
       };
     }
 
-    return { [key]: value };
+    return {
+      [key]: value };
   }
 });

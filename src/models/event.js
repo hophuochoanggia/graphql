@@ -1,9 +1,8 @@
 import validateRole from '../utils/validateRole';
 
-module.exports = function (sequelize, DataTypes) {
+module.exports = function(sequelize, DataTypes) {
   const event = sequelize.define(
-    'event',
-    {
+    'event', {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -18,8 +17,12 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.ENUM('active', 'inactive', 'completed', 'deleted'),
         defaultValue: 'active'
       },
-      prevEvent: {
+      prevEventId: {
         type: DataTypes.INTEGER,
+        references: {
+          model: 'event',
+          key: 'id'
+        },
         allowNull: true
       },
       data: {
@@ -35,7 +38,7 @@ module.exports = function (sequelize, DataTypes) {
         },
         allowNull: false
       },
-      requestingSpecialistId: {
+      reportingSpecialistId: {
         type: DataTypes.INTEGER,
         references: {
           model: 'user',
@@ -47,15 +50,18 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.JSONB,
         defaultValue: {}
       }
-    },
-    {
+    }, {
       timestamps: true,
       freezeTableName: true
     }
   );
 
   event.associate = ({
-    user, userEvent, patient, eventType, reason
+    user,
+    userEvent,
+    patient,
+    eventType,
+    reason
   }) => {
     event.users = event.belongsToMany(user, {
       through: {
