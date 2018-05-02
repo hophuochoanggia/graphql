@@ -24,6 +24,7 @@ export const createEvent = mutationWithClientMutationId({
         .transaction(transaction =>
           event.create(params, { transaction }).then(instance => {
             e = instance;
+            console.log(e.addUser);
             return Promise.all([
               instance.addUser(instance.requestingSpecialistId, {
                 through: { role: 'REQUESTING SPECIALIST' },

@@ -15,15 +15,9 @@ modelName.map(name => {
   input[`${name}Input`] = new GraphQLInputObjectType({
     name: `${name}Input`,
     fields: () => ({
-      ...field[`${name}Field`]
+      ...field[`${name}FieldForInput`]
     })
   });
 });
 
-input.eventInput = new GraphQLInputObjectType({
-  name: 'eventInput',
-  fields: () => ({
-    ...field.eventField
-  })
-});
 module.exports = input;

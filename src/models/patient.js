@@ -1,9 +1,10 @@
-import validateRole from '../utils/validateRole';
+// import validateRole from '../utils/validateRole';
 import capitalize from '../utils/capitalize';
 
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   const patient = sequelize.define(
-    'patient', {
+    'patient',
+    {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -79,10 +80,6 @@ module.exports = function(sequelize, DataTypes) {
           }
         }
       },
-      medicare: {
-        type: DataTypes.STRING(20),
-        allowNull: true
-      },
       drivingLicense: {
         type: DataTypes.STRING(20),
         allowNull: true
@@ -99,7 +96,8 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.JSONB,
         defaultValue: {}
       }
-    }, {
+    },
+    {
       timestamps: true,
       freezeTableName: true,
       hooks: {
@@ -112,19 +110,7 @@ module.exports = function(sequelize, DataTypes) {
     }
   );
 
-  patient.associate = ({ user, event }) => {
-    patient.consultant = patient.belongsTo(user, {
-      as: 'consultant',
-      foreignKey: {
-        fieldName: 'consultantId',
-        allowNull: false,
-        validate: {
-          isConsultant: validateRole(user, 'CONSULTANT')
-        }
-      },
-      onDelete: 'restrict'
-    });
-
+  patient.associate = ({ event }) => {
     patient.events = patient.hasMany(event, {
       foreignKey: {
         allowNull: false

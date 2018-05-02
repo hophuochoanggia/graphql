@@ -6,16 +6,21 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false,
+        allowNull: false
       },
       role: {
-        type: DataTypes.STRING,
-      },
+        type: DataTypes.STRING
+      }
     },
     {
       timestamps: true,
       freezeTableName: true,
-    },
+      hooks: {
+        beforeSave: instance => {
+          console.log(instance);
+        }
+      }
+    }
   );
   return userEvent;
 };

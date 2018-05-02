@@ -100,8 +100,7 @@ export default async models => {
       birthday: new Date(),
       firstName: 'patient',
       lastName: 'patient',
-      email: 'hoanggia@gmail.com',
-      consultantId: data.users[2].id
+      email: 'hoanggia@gmail.com'
     },
     { returning: false }
   );
@@ -111,8 +110,7 @@ export default async models => {
       birthday: new Date(),
       firstName: 'patient',
       lastName: 'patient',
-      email: 'hoanggia@gmail.com',
-      consultantId: data.users[2].id
+      email: 'hoanggia@gmail.com'
     },
     { returning: false }
   );
@@ -123,8 +121,6 @@ export default async models => {
       date: '2018-04-13',
       patientId: data.patient[0].id,
       data: {},
-      doctorId: data.users[3].id,
-      requestingSpecialistId: data.users[4].id,
       inactiveReasonId: 1
     },
     { returning: false }
@@ -136,8 +132,6 @@ export default async models => {
       date: '2018-04-13',
       patientId: data.patient[1].id,
       data: {},
-      doctorId: data.users[3].id,
-      requestingSpecialistId: data.users[4].id,
       inactiveReasonId: 1
     },
     { returning: false }

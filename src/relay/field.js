@@ -6,7 +6,7 @@ import { modelName } from '../config';
 let cache = {};
 const field = {};
 typeMapper.mapType(type => {
-  // map bools as strings
+  // map enum as strings
   if (type instanceof models.Sequelize.ENUM) {
     return GraphQLString;
   }
@@ -17,17 +17,18 @@ typeMapper.mapType(type => {
 modelName.map(name => {
   field[`${name}Field`] = attributeFields(models[name], {
     allowNull: true,
+    exclude: ['id', 'password'],
+    cache
+  });
+  // Input wont take createAt and updateAt
+  field[`${name}FieldForInput`] = attributeFields(models[name], {
+    allowNull: true,
     exclude: ['id', 'createdAt', 'updatedAt', 'password'],
     cache
   });
 });
 
-field.eventField = attributeFields(models.event, {
-  allowNull: true,
-  exclude: ['id', 'createdAt', 'updatedAt', 'patientId', 'inactiveReasonId'],
-  cache
-});
-//To show in connection with other model(consultant)
+// To show in connection with other model(consultant)
 field.userFieldPublic = attributeFields(models.user, {
   allowNull: true,
   exclude: ['id', 'createdAt', 'updatedAt', 'password', 'username'],

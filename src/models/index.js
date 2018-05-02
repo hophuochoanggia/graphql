@@ -10,8 +10,7 @@ const db = {};
 let sequelize;
 if (config.use_env_variable) {
   sequelize = new Sequelize(process.env[config.use_env_variable]);
-}
-else {
+} else {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
@@ -36,29 +35,27 @@ if (env === 'dev') {
       name: 'study',
       description: 'study',
       metadata: []
-    })
-    user
-      .create({
-        username: 'test',
-        password: '12345',
-        firstName: 'test',
-        lastName: 'test',
-        email: 'hoanggia@gmail.com',
-        role: 'superadmin',
-        address: '6233 Australia',
-        workPhone: '123456'
-      });
-    user
-      .create({
-        username: 'consultant2',
-        password: '12345',
-        firstName: 'test',
-        lastName: 'test',
-        email: 'hoanggia@gmail.com',
-        role: 'consultant',
-        address: '6233 Australia',
-        workPhone: '123456'
-      });
+    });
+    user.create({
+      username: 'test',
+      password: '12345',
+      firstName: 'test',
+      lastName: 'test',
+      email: 'hoanggia@gmail.com',
+      role: 'superadmin',
+      address: '6233 Australia',
+      workPhone: '123456'
+    });
+    user.create({
+      username: 'consultant2',
+      password: '12345',
+      firstName: 'test',
+      lastName: 'test',
+      email: 'hoanggia@gmail.com',
+      role: 'consultant',
+      address: '6233 Australia',
+      workPhone: '123456'
+    });
     user
       .create({
         username: 'superadmin',
@@ -82,20 +79,18 @@ if (env === 'dev') {
             address: '6233 Australia',
             workPhone: '123456'
           })
-          .then(consultant => {
+          .then(() => {
             patient.create({
               firstName: 'Patient1',
               lastName: 'Ho',
               email: 'hoanggia@gmail.com',
-              birthday: new Date(),
-              consultantId: consultant.id
+              birthday: new Date()
             });
             patient.create({
               firstName: 'Patient2',
               lastName: 'Ho',
               email: 'hoanggia@gmail.com',
-              birthday: new Date(),
-              consultantId: consultant.id
+              birthday: new Date()
             });
           });
       });

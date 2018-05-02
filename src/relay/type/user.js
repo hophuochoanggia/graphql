@@ -25,7 +25,9 @@ const userPatientConnection = sequelizeConnection({
   }),
   where: (key, value) => ({
     [key]: {
-      [Op.like]: `%${value}%` } }),
+      [Op.like]: `%${value}%`
+    }
+  }),
   connectionFields: {
     total: {
       type: GraphQLInt,
@@ -102,9 +104,9 @@ export default sequelizeConnection({
       type: GraphQLInt,
       resolve: edge =>
         Buffer.from(edge.cursor, 'base64')
-        .toString('ascii')
-        .split('$')
-        .pop()
+          .toString('ascii')
+          .split('$')
+          .pop()
     }
   },
   orderBy: new GraphQLEnumType({
@@ -118,11 +120,13 @@ export default sequelizeConnection({
     if (key === 'name') {
       return {
         name: {
-          [Op.like]: `%${value}%` }
+          [Op.like]: `%${value}%`
+        }
       };
     }
 
     return {
-      [key]: value };
+      [key]: value
+    };
   }
 });

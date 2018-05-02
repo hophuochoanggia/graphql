@@ -9,9 +9,10 @@ const generatePwd = () => {
   return base64.slice(0, -1);
 };
 
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   const user = sequelize.define(
-    'user', {
+    'user',
+    {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -131,7 +132,8 @@ module.exports = function(sequelize, DataTypes) {
           'CONSULTANT',
           'DOCTOR',
           'SPECIALIST',
-          'DENTIST'
+          'DENTIST',
+          'SCIENTIST'
         ),
         defaultValue: 'CONSULTANT'
       },
@@ -139,15 +141,15 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.JSONB,
         defaultValue: {}
       }
-    }, {
+    },
+    {
       timestamps: true,
       freezeTableName: true,
       hooks: {
         beforeCreate: instance => {
           if (env === 'prod') {
             instance.password = generatePwd();
-          }
-          else {
+          } else {
             instance.password = '12345';
           }
           return cryptPwd(instance.password).then(success => {
@@ -166,36 +168,26 @@ module.exports = function(sequelize, DataTypes) {
     }
   );
 
-  user.prototype.generatePwd = async function() {
+  user.prototype.generatePwd = async function () {
     const password = generatePwd();
     try {
       const hash = await cryptPwd(password);
       return this.update({ password: hash });
-    }
-    catch (e) {
+    } catch (e) {
       throw e;
     }
   };
 
-  user.prototype.setPwd = async function(password) {
+  user.prototype.setPwd = async function (password) {
     try {
       const hash = await cryptPwd(password);
       return this.update({ password: hash });
-    }
-    catch (e) {
+    } catch (e) {
       throw e;
     }
   };
 
-  user.associate = ({ event, patient, userEvent }) => {
-    user.patients = user.hasMany(patient, {
-      foreignKey: {
-        fieldName: 'consultantId',
-        allowNull: false
-      },
-      onDelete: 'restrict'
-    });
-
+  user.associate = ({ event, userEvent }) => {
     user.events = user.belongsToMany(event, { through: { model: userEvent } });
   };
   return user;

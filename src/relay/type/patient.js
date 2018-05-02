@@ -46,25 +46,6 @@ const patientType = new GraphQLObjectType({
       resolve: instance => `${instance.firstName} ${instance.lastName}`
     },
     ...patientField,
-    consultant: {
-      type: new GraphQLObjectType({
-        name: 'consultant',
-        fields: {
-          id: globalIdField(user.name),
-          _id: {
-            type: GraphQLInt,
-            resolve: instance => instance.id
-          },
-          fullName: {
-            type: GraphQLString,
-            resolve: instance => `${instance.firstName} ${instance.lastName}`
-          },
-          ...userFieldPublic
-        },
-        interfaces: [nodeInterface]
-      }),
-      resolve: resolver(patient.consultant)
-    },
     events: {
       type: patientEventConnection.connectionType,
       args: {
@@ -91,9 +72,9 @@ export default sequelizeConnection({
       type: GraphQLInt,
       resolve: edge =>
         Buffer.from(edge.cursor, 'base64')
-        .toString('ascii')
-        .split('$')
-        .pop()
+          .toString('ascii')
+          .split('$')
+          .pop()
     }
   },
   orderBy: new GraphQLEnumType({
@@ -107,7 +88,7 @@ export default sequelizeConnection({
     if (key === 'name') {
       return {
         name: {
-          [Op.like]: ` % $ { value } % `
+          [Op.like]: ' % $ { value } % '
         }
       };
     }
