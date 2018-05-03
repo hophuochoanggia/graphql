@@ -9,17 +9,19 @@ module.exports = function (sequelize, DataTypes) {
         allowNull: false
       },
       role: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false
       }
     },
     {
       timestamps: true,
       freezeTableName: true,
-      hooks: {
-        beforeSave: instance => {
-          console.log(instance);
+      indexes: [
+        {
+          unique: true,
+          fields: ['role', 'eventId']
         }
-      }
+      ]
     }
   );
   return userEvent;

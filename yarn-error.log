@@ -1,8 +1,8 @@
 Arguments: 
-  /home/ubuntu/.nvm/versions/node/v8.9.4/bin/node /home/ubuntu/.nvm/versions/node/v8.9.4/bin/yarn start
+  C:\Program Files\nodejs\node.exe C:\Program Files\nodejs\node_modules\yarn\bin\yarn.js test ./test/graphql.test.js
 
 PATH: 
-  /home/ubuntu/.nvm/versions/node/v8.9.4/bin:/usr/local/rvm/gems/ruby-2.4.0/bin:/usr/local/rvm/gems/ruby-2.4.0@global/bin:/usr/local/rvm/rubies/ruby-2.4.0/bin:/mnt/shared/bin:/home/ubuntu/workspace/node_modules/.bin:/home/ubuntu/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/mnt/shared/sbin:/opt/gitl:/opt/go/bin:/mnt/shared/c9/app.nw/bin:/usr/local/rvm/bin
+  C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\Vale\bin;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\ProgramData\Oracle\Java\javapath;C:\Program Files\Common Files\Microsoft Shared\Windows Live;C:\Program Files (x86)\Common Files\Microsoft Shared\Windows Live;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0;C:\Program Files\Lenovo\Bluetooth Software;C:\Program Files\Lenovo\Bluetooth Software\syswow64;C:\Program Files (x86)\Windows Live\Shared;C:\Program Files\Git\cmd;E:\Workspace;C:\Program Files (x86)\Skype\Phone;C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit;C:\Users\Vale\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Cmder;C:\Program Files (x86)\Vim\vim80;C:\Users\Vale\AppData\Local\atom\bin;C:\cmder;C:\Python27;C:\Python27\Scripts;C:\Program Files\Java\jdk1.8.0_121\bin;E:\Workspace;C:\Users\Vale\AppData\Local\Yarn\bin;C:\Program Files\Docker Toolbox;C:\Program Files (x86)\Microsoft VS Code\bin;C:\Users\Vale\A;C:\Program Files\PuTTY;C:\Program Files (x86)\Yarn\bin;C:\ProgramData\chocolatey\bin;C:\Program Files (x86)\PDFtk\bin;C:\Cmder;C:\Program Files (x86)\Vim\vim80;C:\Users\Vale\AppData\Local\atom\bin;C:\cmder;C:\Python27;C:\Python27\Scripts;C:\Program Files\Java\jdk1.8.0_121\bin;E:\Workspace;C:\Program Files (x86)\Microsoft VS Code\bin;C:\Users\Vale\AppData\Roaming\nvm;C:\Program Files (x86)\Nmap;C:\Program Files\PostgreSQL\9.6\bin;C:\Users\Vale\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Users\Vale\AppData\Roaming\npm;C:\Program Files\Heroku\bin;C:\Program Files\Docker Toolbox;C:\Users\Vale\AppData\Local\Yarn\bin;C:\path\to\AndroidSDK\tools;C:\path\to\AndroidSDK\platform-tools;C:\Users\Vale\AppData\Local\Programs\Python\Python36-32
 
 Yarn version: 
   1.5.1
@@ -11,7 +11,7 @@ Node version:
   8.9.4
 
 Platform: 
-  linux x64
+  win32 x64
 
 npm manifest: 
   {
@@ -6356,14 +6356,14 @@ Lockfile:
 Trace: 
   Error: Command failed.
   Exit code: 1
-  Command: sh
-  Arguments: -c node src/index.js
-  Directory: /home/ubuntu/workspace
+  Command: C:\windows\system32\cmd.exe
+  Arguments: /d /s /c jest --watch ./test/graphql.test.js
+  Directory: E:\Workspace\bizman-v3\graphql
   Output:
   
-      at ProcessTermError.MessageError (/home/ubuntu/.nvm/versions/node/v8.9.4/lib/node_modules/yarn/lib/cli.js:186:110)
-      at new ProcessTermError (/home/ubuntu/.nvm/versions/node/v8.9.4/lib/node_modules/yarn/lib/cli.js:226:113)
-      at ChildProcess.<anonymous> (/home/ubuntu/.nvm/versions/node/v8.9.4/lib/node_modules/yarn/lib/cli.js:30281:17)
+      at ProcessTermError.MessageError (C:\Users\Vale\AppData\Roaming\nvm\v8.9.4\node_modules\yarn\lib\cli.js:186:110)
+      at new ProcessTermError (C:\Users\Vale\AppData\Roaming\nvm\v8.9.4\node_modules\yarn\lib\cli.js:226:113)
+      at ChildProcess.<anonymous> (C:\Users\Vale\AppData\Roaming\nvm\v8.9.4\node_modules\yarn\lib\cli.js:30281:17)
       at emitTwo (events.js:126:13)
       at ChildProcess.emit (events.js:214:7)
       at maybeClose (internal/child_process.js:925:16)

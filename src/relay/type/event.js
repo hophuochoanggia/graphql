@@ -1,12 +1,49 @@
-import { GraphQLInt, GraphQLEnumType, GraphQLString, GraphQLObjectType } from 'graphql';
+import { GraphQLInt, GraphQLString, GraphQLEnumType, GraphQLObjectType } from 'graphql';
 import { globalIdField } from 'graphql-relay';
 import { resolver, relay } from 'graphql-sequelize';
 import { user, event, patient, eventType as _eventType, reason } from '../../models';
-import { eventField, eventTypeField, reasonField, patientField, userFieldPublic } from '../field';
+import { userField, eventField, eventTypeField, reasonField, patientField } from '../field';
 import node from './node';
 
 const { nodeInterface } = node;
 const { sequelizeConnection } = relay;
+
+const userType = new GraphQLObjectType({
+  name: `${user.name}TypeEdge`,
+  fields: {
+    id: globalIdField(user.name),
+    _id: {
+      type: GraphQLInt,
+      resolve: instance => instance.id
+    },
+    ...userField,
+    fullName: {
+      type: GraphQLString,
+      resolve: instance => `${instance.firstName} ${instance.lastName}`
+    }
+  },
+  interfaces: [nodeInterface]
+});
+
+const eventUserConnection = sequelizeConnection({
+  name: 'eventUser',
+  nodeType: userType,
+  target: event.users,
+  orderBy: new GraphQLEnumType({
+    name: 'EventUserOrderBy',
+    values: {
+      AGE: { value: ['createdAt', 'DESC'] }
+    }
+  }),
+  connectionFields: {
+    total: {
+      type: GraphQLInt,
+      resolve: ({ source }) => {
+        source.countEvents();
+      }
+    }
+  }
+});
 
 const eventType = new GraphQLObjectType({
   name: event.name,
@@ -49,6 +86,13 @@ const eventType = new GraphQLObjectType({
         interfaces: [nodeInterface]
       }),
       resolve: resolver(event.reason)
+    },
+    users: {
+      type: eventUserConnection.connectionType,
+      args: {
+        ...eventUserConnection.connectionArgs
+      },
+      resolve: eventUserConnection.resolve
     }
   },
   interfaces: [nodeInterface]

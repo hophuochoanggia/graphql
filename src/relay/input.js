@@ -19,5 +19,4 @@ modelName.map(name => {
     })
   });
 });
-
 module.exports = input;

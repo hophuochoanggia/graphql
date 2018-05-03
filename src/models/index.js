@@ -1,3 +1,5 @@
+import seeder from '../../test/seeder';
+
 const Sequelize = require('sequelize');
 const fs = require('fs');
 const path = require('path');
@@ -29,71 +31,9 @@ Object.keys(db).forEach(modelName => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 if (env === 'dev') {
-  db.sequelize.sync({ force: true, logging: false }).then(() => {
-    const { eventType, user, patient } = db.sequelize.models;
-    eventType.create({
-      name: 'study',
-      description: 'study',
-      metadata: []
-    });
-    user.create({
-      username: 'test',
-      password: '12345',
-      firstName: 'test',
-      lastName: 'test',
-      email: 'hoanggia@gmail.com',
-      role: 'superadmin',
-      address: '6233 Australia',
-      workPhone: '123456'
-    });
-    user.create({
-      username: 'consultant2',
-      password: '12345',
-      firstName: 'test',
-      lastName: 'test',
-      email: 'hoanggia@gmail.com',
-      role: 'consultant',
-      address: '6233 Australia',
-      workPhone: '123456'
-    });
-    user
-      .create({
-        username: 'superadmin',
-        password: '12345',
-        firstName: 'superadmin',
-        lastName: 'Ho',
-        email: 'hoanggia@gmail.com',
-        role: 'superadmin',
-        address: '6233 Australia',
-        workPhone: '123456'
-      })
-      .then(() => {
-        user
-          .create({
-            username: 'consultant',
-            password: '12345',
-            firstName: 'consultant',
-            lastName: 'Ho',
-            email: 'hoanggia@gmail.com',
-            role: 'consultant',
-            address: '6233 Australia',
-            workPhone: '123456'
-          })
-          .then(() => {
-            patient.create({
-              firstName: 'Patient1',
-              lastName: 'Ho',
-              email: 'hoanggia@gmail.com',
-              birthday: new Date()
-            });
-            patient.create({
-              firstName: 'Patient2',
-              lastName: 'Ho',
-              email: 'hoanggia@gmail.com',
-              birthday: new Date()
-            });
-          });
-      });
+  db.sequelize.sync({ force: true, logging: false }).then(async () => {
+    const { models } = db.sequelize;
+    await seeder(models);
   });
 }
 

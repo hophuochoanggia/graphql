@@ -1,4 +1,4 @@
-import { GraphQLString } from 'graphql';
+import { GraphQLString, GraphQLInt } from 'graphql';
 import { attributeFields, typeMapper } from 'graphql-sequelize';
 import models from '../models';
 import { modelName } from '../config';
@@ -10,6 +10,10 @@ typeMapper.mapType(type => {
   if (type instanceof models.Sequelize.ENUM) {
     return GraphQLString;
   }
+
+  if (type instanceof models.Sequelize.VIRTUAL) {
+    return GraphQLInt;
+  }
   // use default for everything else
   return false;
 });
@@ -17,7 +21,7 @@ typeMapper.mapType(type => {
 modelName.map(name => {
   field[`${name}Field`] = attributeFields(models[name], {
     allowNull: true,
-    exclude: ['id', 'password'],
+    exclude: ['id', 'password', 'consultant', 'doctor', 'specialist', 'dentist', 'scientist'],
     cache
   });
   // Input wont take createAt and updateAt
@@ -41,5 +45,4 @@ field.viewerEditField = attributeFields(models.user, {
   exclude: ['id', 'createdAt', 'updatedAt', 'username', 'password', 'role'],
   cache
 });
-
 module.exports = field;

@@ -2,41 +2,14 @@ import { GraphQLString, GraphQLObjectType, GraphQLInt, GraphQLEnumType } from 'g
 import { globalIdField } from 'graphql-relay';
 import { relay } from 'graphql-sequelize';
 import models from '../../models';
-import patientType from './patient';
 import eventType from './event';
 import node from './node';
-import { patientField, userField } from '../field';
+import { userField } from '../field';
 
 const { nodeInterface } = node;
 const { sequelizeConnection } = relay;
 const { user, sequelize } = models;
 const { Op } = sequelize;
-
-const userPatientConnection = sequelizeConnection({
-  name: 'userPatient',
-  nodeType: patientType.nodeType,
-  target: user.patients,
-  orderBy: new GraphQLEnumType({
-    name: 'UserPatientOrderBy',
-    values: {
-      AGE: { value: ['createdAt', 'DESC'] },
-      LASTNAME: { value: ['lastName', 'ASC'] }
-    }
-  }),
-  where: (key, value) => ({
-    [key]: {
-      [Op.like]: `%${value}%`
-    }
-  }),
-  connectionFields: {
-    total: {
-      type: GraphQLInt,
-      resolve: ({ source }) => {
-        source.countPatients();
-      }
-    }
-  }
-});
 
 const userEventConnection = sequelizeConnection({
   name: 'userEvent',
@@ -69,14 +42,6 @@ const userType = new GraphQLObjectType({
     fullName: {
       type: GraphQLString,
       resolve: instance => `${instance.firstName} ${instance.lastName}`
-    },
-    patients: {
-      type: userPatientConnection.connectionType,
-      args: {
-        ...userPatientConnection.connectionArgs,
-        ...patientField
-      },
-      resolve: userPatientConnection.resolve
     },
     events: {
       type: userEventConnection.connectionType,

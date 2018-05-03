@@ -4,12 +4,12 @@ import { resolverWithRole } from '../../utils/resolverWithRole';
 import { event, sequelize } from '../../models';
 import { eventType } from '../type';
 import { eventInput } from '../input';
-import { eventField } from '../field';
+import { eventFieldForInput } from '../field';
 
 export const createEvent = mutationWithClientMutationId({
   name: 'eventCreate',
   inputFields: {
-    ...eventField
+    ...eventFieldForInput
   },
   outputFields: () => ({
     response: {
@@ -18,29 +18,11 @@ export const createEvent = mutationWithClientMutationId({
     }
   }),
   mutateAndGetPayload: (params, { role }) =>
-    resolverWithRole('createEvent', role, {}, () => {
-      let e;
-      return sequelize
-        .transaction(transaction =>
-          event.create(params, { transaction }).then(instance => {
-            e = instance;
-            console.log(e.addUser);
-            return Promise.all([
-              instance.addUser(instance.requestingSpecialistId, {
-                through: { role: 'REQUESTING SPECIALIST' },
-                transaction
-              }),
-              instance.addUser(instance.doctorId, {
-                through: { role: 'DOCTOR' },
-                transaction
-              })
-            ]);
-          }))
-        .then(() => e) // this return the newly create event to graphql
-        .catch(err => {
-          throw err;
-        });
-    })
+    resolverWithRole('createEvent', role, {}, () => sequelize
+      .transaction(transaction => event.create(params, { transaction }))
+      .catch(err => {
+        throw err;
+      }))
 });
 
 export const editEventById = mutationWithClientMutationId({
@@ -70,6 +52,6 @@ export const editEventById = mutationWithClientMutationId({
           instance,
           model: 'event'
         },
-        () => instance.update(data)
+        () => sequelize.transaction(transaction => instance.update(data, { transaction }))
       ))
 });

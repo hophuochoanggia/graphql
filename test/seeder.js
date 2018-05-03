@@ -76,6 +76,17 @@ export default async models => {
     { returning: false }
   );
 
+  data.users[6] = await models.user.create(
+    {
+      username: 'consultant2',
+      password: '12345',
+      firstName: 'Gia',
+      lastName: 'Ho',
+      email: 'hoanggia@gmail.com',
+      role: 'CONSULTANT'
+    },
+    { returning: false }
+  );
   data.eventType = await models.eventType.create(
     {
       name: 'study',
@@ -121,7 +132,10 @@ export default async models => {
       date: '2018-04-13',
       patientId: data.patient[0].id,
       data: {},
-      inactiveReasonId: 1
+      inactiveReasonId: 1,
+      consultant: data.users[2].id,
+      doctor: data.users[3].id,
+      specialist: data.users[4].id
     },
     { returning: false }
   );
@@ -132,12 +146,12 @@ export default async models => {
       date: '2018-04-13',
       patientId: data.patient[1].id,
       data: {},
-      inactiveReasonId: 1
+      inactiveReasonId: 1,
+      consultant: data.users[2].id,
+      doctor: data.users[3].id,
+      specialist: data.users[4].id
     },
     { returning: false }
   );
-
-  await data.event[1].addUser(3, { through: { role: 'DOCTOR' } });
-  await data.event[1].addUser(4, { through: { role: 'REQUESTING SPECIALIST' } });
   return data;
 };

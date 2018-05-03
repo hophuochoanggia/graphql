@@ -418,6 +418,15 @@ describe('Sequelize', () => {
                     inactiveReason {
                       description
                     }
+                    users {
+                      total
+                      edges {
+                        node {
+                          fullName
+                          role
+                        }
+                      }
+                    }
                   }
                 }
               }
@@ -429,9 +438,11 @@ describe('Sequelize', () => {
             const patientName = d.patient.firstName;
             const typeName = d.type.name;
             const { description } = d.inactiveReason;
+            const { fullName } = view(edgePath, d.users);
             expect(patientName).toBe('Patient');
             expect(typeName).toBe('STUDY');
             expect(description).toBe('old');
+            expect(fullName).toBe('Gia Ho');
           } else {
             const { message } = result.errors[0];
             expect(message).toBe('Unauthorized');
@@ -446,10 +457,13 @@ describe('Sequelize', () => {
             mutation {
               createEvent(input: {
                 data: {
-                  score: 1
+                  score: "from test"
                 }
                 typeId: 1
                 patientId: 1
+                consultant: 3
+                doctor: 4
+                specialist: 5
               }) {
                 response {
                   data
@@ -460,7 +474,7 @@ describe('Sequelize', () => {
           const result = await graphql(schema, mutation, {}, { role });
           if (allowedRole.includes(role)) {
             const { response: { data: { score } } } = result.data.createEvent;
-            expect(score).toBe(1);
+            expect(score).toBe('from test');
           } else {
             const { message } = result.errors[0];
             expect(message).toBe('Unauthorized');
@@ -480,6 +494,7 @@ describe('Sequelize', () => {
                 data: {
                   score: 2
                 }
+                consultant: 7
               }
             }) {
               response {

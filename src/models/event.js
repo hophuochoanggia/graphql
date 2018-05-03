@@ -1,6 +1,7 @@
-import validateRole from '../utils/validateRole';
+const roles = ['consultant', 'doctor', 'specialist', 'dentist', 'scientist'];
 
 module.exports = function (sequelize, DataTypes) {
+  const { Promise } = sequelize;
   const event = sequelize.define(
     'event',
     {
@@ -22,13 +23,64 @@ module.exports = function (sequelize, DataTypes) {
       legacy: {
         type: DataTypes.JSONB,
         defaultValue: {}
+      },
+      consultant: {
+        type: DataTypes.VIRTUAL,
+        allowNull: false
+      },
+      doctor: {
+        type: DataTypes.VIRTUAL,
+        allowNull: false
+      },
+      specialist: {
+        type: DataTypes.VIRTUAL,
+        allowNull: false
+      },
+      dentist: {
+        type: DataTypes.VIRTUAL,
+        allowNull: true
+      },
+      scientist: {
+        type: DataTypes.VIRTUAL,
+        allowNull: true
       }
     },
     {
       timestamps: true,
-      freezeTableName: true
+      freezeTableName: true,
+      hooks: {
+        afterSave: (instance, { transaction }) => {
+          const updatePromiseArray = [];
+          roles.map(role => {
+            if (instance[role]) {
+              return updatePromiseArray.push(instance.setUser(instance[role], role.toUpperCase(), transaction));
+            }
+          });
+          return Promise.all(updatePromiseArray);
+        }
+      }
     }
   );
+
+  event.prototype.setUser = function (id, role, transaction) {
+    const { user, userEvent } = sequelize.models;
+    return Promise.all([
+      user.findById(id, { transaction }),
+      userEvent.findOrBuild({
+        where: {
+          eventId: this.id,
+          role
+        },
+        transaction
+      })
+    ]).spread((uInstance, [throughInstance]) => {
+      if (uInstance.role !== role) {
+        throw new Error(`The user is not a ${role}`);
+      }
+      throughInstance.userId = uInstance.id;
+      throughInstance.save();
+    });
+  };
 
   event.associate = ({
     user, userEvent, patient, eventType, reason
