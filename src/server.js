@@ -22,7 +22,7 @@ function startApp(instance, port) {
 models.sequelize
   .sync()
   .then(() => {
-    startApp(app, process.env.PORT || 8080);
+    startApp(app, process.env.PORT || 8000);
   })
   .catch(e => {
     throw new Error(e);

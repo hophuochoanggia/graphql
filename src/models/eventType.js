@@ -6,21 +6,21 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false,
+        allowNull: false
       },
       name: {
         type: DataTypes.STRING(50),
         allowNull: false,
-        unique: true,
+        unique: true
       },
-      metadata: {
+      schema: {
         type: DataTypes.JSONB,
-        allowNull: false,
+        allowNull: false
       },
       description: {
         type: DataTypes.STRING(100),
-        allowNull: false,
-      },
+        allowNull: false
+      }
     },
     {
       timestamps: true,
@@ -28,17 +28,17 @@ module.exports = function (sequelize, DataTypes) {
       hooks: {
         beforeSave: instance => {
           instance.name = instance.name.toUpperCase();
-        },
-      },
-    },
+        }
+      }
+    }
   );
   eventType.associate = ({ event }) => {
     eventType.events = eventType.hasMany(event, {
       foreignKey: {
         fieldName: 'typeId',
-        allowNull: false,
+        allowNull: false
       },
-      onDelete: 'restrict',
+      onDelete: 'restrict'
     });
   };
   return eventType;

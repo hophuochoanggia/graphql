@@ -21,8 +21,9 @@ modelName.map(name => {
       type: modelType.connectionType,
       args: {
         id: {
-          type: new GraphQLNonNull(GraphQLInt)
-        }
+          type: GraphQLInt
+        },
+        ...modelField
       },
       resolve: (options, args, ctx, info) =>
         resolverWithRole(name, ctx.role, {}, () => modelType.resolve(options, args, ctx, info))
@@ -34,7 +35,8 @@ modelName.map(name => {
         ...modelField
       },
       resolve: (options, args, ctx, info) =>
-        resolverWithRole(name, ctx.role, {}, () => modelType.resolve(options, args, ctx, info))
+        resolverWithRole(`${name}s`, ctx.role, {}, () =>
+          modelType.resolve(options, args, ctx, info))
     };
   }
 });

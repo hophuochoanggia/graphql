@@ -3,12 +3,14 @@ import patientType from './patient';
 import reasonType from './reason';
 import eventType from './event';
 import eventTypeType from './eventType';
+import configType from './config';
 
 const type = {
   userType,
   patientType,
   reasonType,
   eventTypeType,
-  eventType
+  eventType,
+  configType
 };
 module.exports = type;

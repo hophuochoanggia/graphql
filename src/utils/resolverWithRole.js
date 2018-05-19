@@ -19,7 +19,12 @@ const acl = {
   event: ['SUPERADMIN', 'ADMIN'],
   events: ['SUPERADMIN', 'ADMIN'],
   createEvent: ['SUPERADMIN', 'ADMIN', 'CONSULTANT'],
-  editEventById: ['SUPERADMIN', 'ADMIN', 'CONSULTANT']
+  editEventById: ['SUPERADMIN', 'ADMIN', 'CONSULTANT'],
+
+  config: ['SUPERADMIN', 'ADMIN', 'CONSULTANT', 'DOCTOR', 'DENTIST', 'SCIENTIST'],
+  configs: ['SUPERADMIN', 'ADMIN', 'CONSULTANT', 'DOCTOR', 'DENTIST', 'SCIENTIST'],
+  createConfig: ['SUPERADMIN'],
+  editConfigByName: ['SUPERADMIN']
 };
 
 const level = {
@@ -34,6 +39,7 @@ export const roles = ['SUPERADMIN', 'ADMIN', 'CONSULTANT', 'DOCTOR', 'SPECIALIST
 export const roleResolver = (methodName, role) => acl[methodName].indexOf(role) > -1;
 export const resolverWithRole = (methodName, role, { actorId, model, instance }, resolver) => {
   const rule = acl[methodName];
+
   if (!rule) return Promise.reject(new Error('Unauthorized')); // deny if can't find rule
 
   if (rule.indexOf('OWNER') > -1) {

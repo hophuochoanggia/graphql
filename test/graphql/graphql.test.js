@@ -1,8 +1,9 @@
 import { graphql } from 'graphql';
 import { lensPath, view } from 'ramda';
-import models from '../src/models';
-import seeder from './seeder';
-import schema from '../src/relay';
+import capitalize from '../../src/utils/capitalize';
+import models from '../../src/models';
+import seeder from '../seeder';
+import schema from '../../src/relay';
 
 const edgePath = lensPath(['edges', 0, 'node']);
 let data;
@@ -13,7 +14,6 @@ beforeAll(async () => {
 // afterAll(() => );
 const roles = ['SUPERADMIN', 'ADMIN', 'CONSULTANT', 'DOCTOR', 'SPECIALIST', 'DENTIST'];
 describe('Sequelize', () => {
-  /*
   describe('User Model', () => {
     test('Test login', async () => {
       const mutation = `
@@ -40,7 +40,7 @@ describe('Sequelize', () => {
                     events(first: 10) {
                       edges {
                         node {
-                          date
+                          status
                         }
                       }
                     }
@@ -50,8 +50,8 @@ describe('Sequelize', () => {
             }
           `;
         const result = await graphql(schema, query, {}, { role: 'SUPERADMIN' });
-        const { date } = view(edgePath, view(edgePath, result.data.user).events);
-        expect(date).toBe('2018-04-13');
+        const { status } = view(edgePath, view(edgePath, result.data.user).events);
+        expect(status).toBe('ACTIVE');
       });
     });
     describe('changePwd ACL', () => {
@@ -221,8 +221,7 @@ describe('Sequelize', () => {
       });
     });
   });
-  */
-  /*
+
   describe('Patient Model', () => {
     describe('query event of a patient ACL', () => {
       test('event that belong to a user', async () => {
@@ -234,7 +233,6 @@ describe('Sequelize', () => {
                     events {
                       edges {
                         node {
-                          date
                           status
                         }
                       }
@@ -251,7 +249,7 @@ describe('Sequelize', () => {
           { role: 'SUPERADMIN', id: data.users[1].id }
         );
         const { status } = view(edgePath, view(edgePath, result.data.patient).events);
-        expect(status).toBe('active');
+        expect(status).toBe('ACTIVE');
       });
     });
     describe('query list patient ACL', () => {
@@ -337,8 +335,7 @@ describe('Sequelize', () => {
         }));
     });
   });
-  */
-  /*
+
   describe('Event Type Model', () => {
     describe('createEventType ACL', () => {
       const allowedRole = ['SUPERADMIN'];
@@ -397,7 +394,6 @@ describe('Sequelize', () => {
         }));
     });
   });
-  */
 
   describe('Event Model', () => {
     describe('query event ACL', () => {

@@ -91,7 +91,7 @@ export default async models => {
     {
       name: 'study',
       description: 'study type',
-      metadata: {
+      schema: {
         date: 'string'
       }
     },

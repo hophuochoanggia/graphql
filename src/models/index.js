@@ -34,6 +34,17 @@ if (env === 'dev') {
   db.sequelize.sync({ force: true, logging: false }).then(async () => {
     const { models } = db.sequelize;
     await seeder(models);
+    models.config.create({
+      name: 'REFERRAL-METADATA',
+      setting: {
+        JSONSchema: {
+          title: 'A single-field form',
+          type: 'string'
+        },
+        UISchema: {}
+      },
+      description: 'Referal metadata'
+    });
   });
 }
 
