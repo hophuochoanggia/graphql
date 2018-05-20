@@ -7,8 +7,8 @@ import {
 } from "graphql";
 import { globalIdField } from "graphql-relay";
 import { relay } from "graphql-sequelize";
-import { patient, sequelize } from "../../models";
-import { patientField } from "../field";
+import { referral, patient, sequelize } from "../../models";
+import { referralField } from "../field";
 import eventType from "./event";
 import node from "./node";
 
@@ -16,31 +16,8 @@ const { nodeInterface } = node;
 const { sequelizeConnection } = relay;
 const { Op } = sequelize;
 
-const patientEventConnection = sequelizeConnection({
-  name: "patientEvent",
-  nodeType: eventType.nodeType,
-  target: patient.events,
-  orderBy: new GraphQLEnumType({
-    name: "PatientEventOrderBy",
-    values: {
-      AGE: { value: ["createdAt", "DESC"] }
-    }
-  }),
-  where: (key, value) => ({
-    [key]: value
-  }),
-  connectionFields: {
-    total: {
-      type: GraphQLInt,
-      resolve: ({ source }) => {
-        source.countEvents();
-      }
-    }
-  }
-});
-
-const patientType = new GraphQLObjectType({
-  name: patient.name,
+const referralType = new GraphQLObjectType({
+  name: referral.name,
   fields: {
     id: globalIdField(patient.name),
     _id: {
@@ -51,26 +28,19 @@ const patientType = new GraphQLObjectType({
       type: GraphQLString,
       resolve: instance => `${instance.firstName} ${instance.lastName}`
     },
-    ...patientField,
-    events: {
-      type: patientEventConnection.connectionType,
-      args: {
-        ...patientEventConnection.connectionArgs
-      },
-      resolve: patientEventConnection.resolve
-    }
+    ...referralField
   },
   interfaces: [nodeInterface]
 });
 
 export default sequelizeConnection({
-  name: "patient",
-  nodeType: patientType,
-  target: patient,
+  name: "referral",
+  nodeType: referralType,
+  target: referral,
   connectionFields: {
     total: {
       type: GraphQLInt,
-      resolve: () => patient.count()
+      resolve: () => referral.count()
     }
   },
   edgeFields: {
@@ -84,10 +54,9 @@ export default sequelizeConnection({
     }
   },
   orderBy: new GraphQLEnumType({
-    name: "PatientOrderBy",
+    name: "ReferralOrderBy",
     values: {
-      firstName: { value: ["firstName", "ASC"] },
-      lastName: { value: ["lastName", "ASC"] }
+      createdAt: { value: ["createdAt", "ASC"] }
     }
   }),
   where: (key, value) => {
