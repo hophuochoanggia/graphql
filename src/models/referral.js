@@ -1,6 +1,6 @@
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   const referral = sequelize.define(
-    "referral",
+    'referral',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -9,8 +9,8 @@ module.exports = function(sequelize, DataTypes) {
         allowNull: false
       },
       status: {
-        type: DataTypes.ENUM("PENDING", "REJECTED", "APPROVED"),
-        defaultValue: "PENDING"
+        type: DataTypes.ENUM('PENDING', 'REJECTED', 'APPROVED'),
+        defaultValue: 'PENDING'
       },
       birthday: {
         type: DataTypes.DATEONLY,
@@ -38,10 +38,10 @@ module.exports = function(sequelize, DataTypes) {
         validate: {
           len: {
             args: [6, 128],
-            msg: "Email address must be between 6 and 128 characters in length"
+            msg: 'Email address must be between 6 and 128 characters in length'
           },
           isEmail: {
-            msg: "Email address must be valid"
+            msg: 'Email address must be valid'
           }
         }
       },
@@ -62,11 +62,11 @@ module.exports = function(sequelize, DataTypes) {
 
   referral.associate = ({ user }) => {
     referral.doctor = referral.belongsTo(user, {
-      as: "doctor",
+      as: 'doctor',
       foreignKey: {
         allowNull: false
       },
-      onDelete: "restrict"
+      onDelete: 'restrict'
     });
   };
 

@@ -1,16 +1,10 @@
-/* global Buffer*/
-import {
-  GraphQLString,
-  GraphQLEnumType,
-  GraphQLObjectType,
-  GraphQLInt
-} from "graphql";
-import { globalIdField } from "graphql-relay";
-import { relay } from "graphql-sequelize";
-import { referral, patient, sequelize } from "../../models";
-import { referralField } from "../field";
-import eventType from "./event";
-import node from "./node";
+/* global Buffer */
+import { GraphQLString, GraphQLEnumType, GraphQLObjectType, GraphQLInt } from 'graphql';
+import { globalIdField } from 'graphql-relay';
+import { resolver, relay } from 'graphql-sequelize';
+import { referral, user, sequelize } from '../../models';
+import { referralField, userField } from '../field';
+import node from './node';
 
 const { nodeInterface } = node;
 const { sequelizeConnection } = relay;
@@ -19,7 +13,7 @@ const { Op } = sequelize;
 const referralType = new GraphQLObjectType({
   name: referral.name,
   fields: {
-    id: globalIdField(patient.name),
+    id: globalIdField(referral.name),
     _id: {
       type: GraphQLInt,
       resolve: instance => instance.id
@@ -28,13 +22,24 @@ const referralType = new GraphQLObjectType({
       type: GraphQLString,
       resolve: instance => `${instance.firstName} ${instance.lastName}`
     },
-    ...referralField
+    ...referralField,
+    doctor: {
+      type: new GraphQLObjectType({
+        name: 'doctorOfReferral',
+        fields: {
+          id: globalIdField(user.name),
+          ...userField
+        },
+        interfaces: [nodeInterface]
+      }),
+      resolve: resolver(referral.doctor)
+    }
   },
   interfaces: [nodeInterface]
 });
 
 export default sequelizeConnection({
-  name: "referral",
+  name: 'referral',
   nodeType: referralType,
   target: referral,
   connectionFields: {
@@ -47,23 +52,23 @@ export default sequelizeConnection({
     index: {
       type: GraphQLInt,
       resolve: edge =>
-        Buffer.from(edge.cursor, "base64")
-          .toString("ascii")
-          .split("$")
+        Buffer.from(edge.cursor, 'base64')
+          .toString('ascii')
+          .split('$')
           .pop()
     }
   },
   orderBy: new GraphQLEnumType({
-    name: "ReferralOrderBy",
+    name: 'ReferralOrderBy',
     values: {
-      createdAt: { value: ["createdAt", "ASC"] }
+      createdAt: { value: ['createdAt', 'ASC'] }
     }
   }),
   where: (key, value) => {
-    if (key === "name") {
+    if (key === 'name') {
       return {
         name: {
-          [Op.like]: " % $ { value } % "
+          [Op.like]: ' % $ { value } % '
         }
       };
     }

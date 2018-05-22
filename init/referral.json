@@ -1,0 +1,59 @@
+{
+  "schema": {
+    "type": "object",
+    "properties": {
+      "service": {
+        "type": "object",
+        "title": "Service(s) Required",
+        "properties": {
+          "home": {
+            "type": "boolean",
+            "title": " Home Base Sleep Study"
+          },
+          "hospital": {
+            "type": "boolean",
+            "title": " Hospital Base Sleep Study"
+          },
+          "consultant": {
+            "type": "boolean",
+            "title": " Consultant with Sleep Physician"
+          }
+        }
+      },
+      "STOP": {
+        "type": "object",
+        "title": "STOP Questionaire",
+        "properties": {
+          "1": {
+            "type": "boolean",
+            "title": " Do you snore loudly"
+          },
+          "2": {
+            "type": "boolean",
+            "title": " Do you often feel tired, fatigued or sleepy during the daytime?"
+          },
+          "3": {
+            "type": "boolean",
+            "title": " Has anyone noticed you stop breathing during your sleep?"
+          },
+          "4": {
+            "type": "boolean",
+            "title": " Do you have or are you being treated for high blood pressure?"
+          },
+          "5": {
+            "type": "boolean",
+            "title": " N/A"
+          }
+        }
+      }
+    }
+  },
+  "uiSchema": {
+    "STOP": {
+      "ui:description":
+        "<p><strong>Reference</strong>: STOP Questionnaire (Chung F et al. Anesthesiology 2008 May; 108(5):812-21)</p>",
+      "ui:help":
+        "<p>Patients answering <strong>Yes to 2 or more</strong> of the above questions are at <strong>high risk of having OSA</strong> and may be referred directly for a Home Based Sleep Study. The Epworth Sleepiness Scale (ESS) may also be used to further determine the necessity for the investigation.</p>"
+    }
+  }
+}

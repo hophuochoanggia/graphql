@@ -1,27 +1,10 @@
-/*global Buffer*/
-import {
-  GraphQLInt,
-  GraphQLString,
-  GraphQLEnumType,
-  GraphQLObjectType
-} from "graphql";
-import { globalIdField } from "graphql-relay";
-import { resolver, relay } from "graphql-sequelize";
-import {
-  user,
-  event,
-  patient,
-  eventType as _eventType,
-  reason
-} from "../../models";
-import {
-  userField,
-  eventField,
-  eventTypeField,
-  reasonField,
-  patientField
-} from "../field";
-import node from "./node";
+/* global Buffer */
+import { GraphQLInt, GraphQLString, GraphQLEnumType, GraphQLObjectType } from 'graphql';
+import { globalIdField } from 'graphql-relay';
+import { resolver, relay } from 'graphql-sequelize';
+import { user, event, patient, eventType as _eventType, reason } from '../../models';
+import { userField, eventField, eventTypeField, reasonField, patientField } from '../field';
+import node from './node';
 
 const { nodeInterface } = node;
 const { sequelizeConnection } = relay;
@@ -44,13 +27,13 @@ const userType = new GraphQLObjectType({
 });
 
 const eventUserConnection = sequelizeConnection({
-  name: "eventUser",
+  name: 'eventUser',
   nodeType: userType,
   target: event.users,
   orderBy: new GraphQLEnumType({
-    name: "EventUserOrderBy",
+    name: 'EventUserOrderBy',
     values: {
-      AGE: { value: ["createdAt", "DESC"] }
+      AGE: { value: ['createdAt', 'DESC'] }
     }
   }),
   connectionFields: {
@@ -74,7 +57,7 @@ const eventType = new GraphQLObjectType({
     ...eventField,
     patient: {
       type: new GraphQLObjectType({
-        name: "patientOfEvent",
+        name: 'patientOfEvent',
         fields: {
           id: globalIdField(patient.name),
           ...patientField
@@ -85,7 +68,7 @@ const eventType = new GraphQLObjectType({
     },
     type: {
       type: new GraphQLObjectType({
-        name: "typeOfEvent",
+        name: 'typeOfEvent',
         fields: {
           id: globalIdField(_eventType.name),
           ...eventTypeField
@@ -96,7 +79,7 @@ const eventType = new GraphQLObjectType({
     },
     inactiveReason: {
       type: new GraphQLObjectType({
-        name: "inactiveReasonOfEvent",
+        name: 'inactiveReasonOfEvent',
         fields: {
           id: globalIdField(reason.name),
           ...reasonField
@@ -117,7 +100,7 @@ const eventType = new GraphQLObjectType({
 });
 
 export default sequelizeConnection({
-  name: "event",
+  name: 'event',
   nodeType: eventType,
   target: event,
   connectionFields: {
@@ -130,16 +113,16 @@ export default sequelizeConnection({
     index: {
       type: GraphQLInt,
       resolve: edge =>
-        Buffer.from(edge.cursor, "base64")
-          .toString("ascii")
-          .split("$")
+        Buffer.from(edge.cursor, 'base64')
+          .toString('ascii')
+          .split('$')
           .pop()
     }
   },
   orderBy: new GraphQLEnumType({
-    name: "eventOrderBy",
+    name: 'eventOrderBy',
     values: {
-      id: { value: ["id", "ASC"] }
+      id: { value: ['id', 'ASC'] }
     }
   }),
   where: (key, value) => ({

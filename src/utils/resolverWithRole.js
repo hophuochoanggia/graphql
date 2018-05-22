@@ -8,7 +8,7 @@ const acl = {
   patient: ['SUPERADMIN', 'ADMIN'],
   patients: ['SUPERADMIN', 'ADMIN'],
   createPatient: ['SUPERADMIN', 'ADMIN', 'CONSULTANT'],
-  editPatientById: ['SUPERADMIN', 'ADMIN', 'OWNER'],
+  editPatientById: ['SUPERADMIN', 'ADMIN', 'CONSULTANT'],
 
   eventType: ['SUPERADMIN', 'ADMIN', 'CONSULTANT'],
   eventTypes: ['SUPERADMIN', 'ADMIN', 'CONSULTANT'],
@@ -24,7 +24,12 @@ const acl = {
   config: ['SUPERADMIN', 'ADMIN', 'CONSULTANT', 'DOCTOR', 'DENTIST', 'SCIENTIST'],
   configs: ['SUPERADMIN', 'ADMIN', 'CONSULTANT', 'DOCTOR', 'DENTIST', 'SCIENTIST'],
   createConfig: ['SUPERADMIN'],
-  editConfigByName: ['SUPERADMIN']
+  editConfigByName: ['SUPERADMIN'],
+
+  referrals: ['SUPERADMIN', 'ADMIN'],
+  referral: ['SUPERADMIN', 'ADMIN'],
+  createReferral: ['DOCTOR'],
+  editReferralById: ['SUPERADMIN', 'ADMIN', 'OWNER']
 };
 
 const level = {
@@ -46,7 +51,7 @@ export const resolverWithRole = (methodName, role, { actorId, model, instance },
     if (model === 'user' && actorId === instance.id) {
       return resolver();
     }
-    if (model === 'patient' && actorId === instance.consultantId) {
+    if (model === 'referral' && actorId === instance.doctorId) {
       return resolver();
     }
   }
