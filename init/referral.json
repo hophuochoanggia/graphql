@@ -1,5 +1,5 @@
 {
-  "schema": {
+  "JSONSchema": {
     "type": "object",
     "properties": {
       "service": {
@@ -48,7 +48,7 @@
       }
     }
   },
-  "uiSchema": {
+  "UISchema": {
     "STOP": {
       "ui:description":
         "<p><strong>Reference</strong>: STOP Questionnaire (Chung F et al. Anesthesiology 2008 May; 108(5):812-21)</p>",

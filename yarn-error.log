@@ -1,5 +1,5 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Program Files\nodejs\node_modules\yarn\bin\yarn.js test ./test/graphql/referral.test.js
+  C:\Program Files\nodejs\node.exe C:\Program Files\nodejs\node_modules\yarn\bin\yarn.js initSetting
 
 PATH: 
   C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\Vale\bin;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\ProgramData\Oracle\Java\javapath;C:\Program Files\Common Files\Microsoft Shared\Windows Live;C:\Program Files (x86)\Common Files\Microsoft Shared\Windows Live;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0;C:\Program Files\Lenovo\Bluetooth Software;C:\Program Files\Lenovo\Bluetooth Software\syswow64;C:\Program Files (x86)\Windows Live\Shared;C:\Program Files\Git\cmd;E:\Workspace;C:\Program Files (x86)\Skype\Phone;C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit;C:\Users\Vale\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Cmder;C:\Program Files (x86)\Vim\vim80;C:\Users\Vale\AppData\Local\atom\bin;C:\cmder;C:\Python27;C:\Python27\Scripts;C:\Program Files\Java\jdk1.8.0_121\bin;E:\Workspace;C:\Users\Vale\AppData\Local\Yarn\bin;C:\Program Files\Docker Toolbox;C:\Program Files (x86)\Microsoft VS Code\bin;C:\Users\Vale\A;C:\Program Files\PuTTY;C:\Program Files (x86)\Yarn\bin;C:\ProgramData\chocolatey\bin;C:\Program Files (x86)\PDFtk\bin;C:\Cmder;C:\Program Files (x86)\Vim\vim80;C:\Users\Vale\AppData\Local\atom\bin;C:\cmder;C:\Python27;C:\Python27\Scripts;C:\Program Files\Java\jdk1.8.0_121\bin;E:\Workspace;C:\Program Files (x86)\Microsoft VS Code\bin;C:\Users\Vale\AppData\Roaming\nvm;C:\Program Files (x86)\Nmap;C:\Program Files\PostgreSQL\9.6\bin;C:\Users\Vale\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Users\Vale\AppData\Roaming\npm;C:\Program Files\Heroku\bin;C:\Program Files\Docker Toolbox;C:\Users\Vale\AppData\Local\Yarn\bin;C:\path\to\AndroidSDK\tools;C:\path\to\AndroidSDK\platform-tools;C:\Users\Vale\AppData\Local\Programs\Python\Python36-32
@@ -61,22 +61,20 @@ npm manifest:
     },
     "scripts": {
       "lint": "eslint .",
-      "prettier": "prettier --single-quote --trailing-comma es5 --write src/**/*.js && prettier --single-quote --trailing-comma es5 --write test/**/*.js ",
+      "prettier":
+        "prettier --single-quote --trailing-comma es5 --write src/**/*.js && prettier --single-quote --trailing-comma es5 --write test/**/*.js ",
       "start": "node src/index.js",
       "dev": "nodemon src/index.js --watch common --watch src",
       "test": "jest --watch",
       "testAll": "jest --runInBand --watch",
-      "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha -- --recursive -R nyan --timeout 5000 && istanbul report"
+      "coverage":
+        "istanbul cover ./node_modules/mocha/bin/_mocha -- --recursive -R nyan --timeout 5000 && istanbul report",
+      "initSetting": "node src/init/index.js"
     },
     "jest": {
       "testEnvironment": "node",
-      "testPathIgnorePatterns": [
-        "/node_modules/"
-      ],
-      "coverageReporters": [
-        "lcov",
-        "html"
-      ]
+      "testPathIgnorePatterns": ["/node_modules/"],
+      "coverageReporters": ["lcov", "html"]
     }
   }
 
@@ -6357,7 +6355,7 @@ Trace:
   Error: Command failed.
   Exit code: 1
   Command: C:\windows\system32\cmd.exe
-  Arguments: /d /s /c jest --watch ./test/graphql/referral.test.js
+  Arguments: /d /s /c node src/init/index.js
   Directory: E:\Workspace\bizman-v3\graphql
   Output:
   

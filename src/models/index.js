@@ -1,4 +1,5 @@
 import seeder from '../../test/seeder';
+import { initReferral } from '../../init';
 
 const Sequelize = require('sequelize');
 const fs = require('fs');
@@ -34,17 +35,7 @@ if (env === 'dev') {
   db.sequelize.sync({ force: true, logging: false }).then(async () => {
     const { models } = db.sequelize;
     await seeder(models);
-    models.config.create({
-      name: 'REFERRAL-METADATA',
-      setting: {
-        JSONSchema: {
-          title: 'A single-field form',
-          type: 'string'
-        },
-        UISchema: {}
-      },
-      description: 'Referal metadata'
-    });
+    await initReferral(models.config);
   });
 }
 

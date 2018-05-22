@@ -45,21 +45,19 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "prettier": "prettier --single-quote --trailing-comma es5 --write src/**/*.js && prettier --single-quote --trailing-comma es5 --write test/**/*.js ",
+    "prettier":
+      "prettier --single-quote --trailing-comma es5 --write src/**/*.js && prettier --single-quote --trailing-comma es5 --write test/**/*.js ",
     "start": "node src/index.js",
     "dev": "nodemon src/index.js --watch common --watch src",
     "test": "jest --watch",
     "testAll": "jest --runInBand --watch",
-    "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha -- --recursive -R nyan --timeout 5000 && istanbul report"
+    "coverage":
+      "istanbul cover ./node_modules/mocha/bin/_mocha -- --recursive -R nyan --timeout 5000 && istanbul report",
+    "initSetting": "node init/index.js"
   },
   "jest": {
     "testEnvironment": "node",
-    "testPathIgnorePatterns": [
-      "/node_modules/"
-    ],
-    "coverageReporters": [
-      "lcov",
-      "html"
-    ]
+    "testPathIgnorePatterns": ["/node_modules/"],
+    "coverageReporters": ["lcov", "html"]
   }
 }

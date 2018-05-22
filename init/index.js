@@ -1,5 +1,14 @@
-import models from '../src/models';
+require('babel-register');
+const path = require('path');
+const fs = require('fs');
 
-// this.filePath = path.join(process.env.DATA_DIR, 'settings.json');
-// const json = fs.readFileSync(this.filePath, 'utf8');
-// this.settings = JSON.parse(json);
+export const initReferral = model => {
+  const filePath = path.join(__dirname, 'referral.json');
+  const json = fs.readFileSync(filePath, 'utf8');
+
+  model.create({
+    name: 'REFERRAL-METADATA',
+    setting: JSON.parse(json),
+    description: 'Referal metadata'
+  });
+};
