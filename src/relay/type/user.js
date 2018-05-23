@@ -3,6 +3,7 @@ import { globalIdField } from 'graphql-relay';
 import { relay } from 'graphql-sequelize';
 import models from '../../models';
 import eventType from './event';
+import referralType from './referral';
 import node from './node';
 import { userField } from '../field';
 
@@ -30,6 +31,32 @@ const userEventConnection = sequelizeConnection({
     }
   }
 });
+
+const userReferralConnection = sequelizeConnection({
+  name: 'userReferral',
+  nodeType: referralType.nodeType,
+  target: user.referral,
+  orderBy: new GraphQLEnumType({
+    name: 'UserReferralOrderBy',
+    values: {
+      createdAt: { value: ['createdAt', 'DESC'] }
+    }
+  }),
+  where: (key, value) => {
+    return {
+      [key]: value
+    };
+  },
+  connectionFields: {
+    total: {
+      type: GraphQLInt,
+      resolve: ({ source }) => {
+        source.countEvents();
+      }
+    }
+  }
+});
+
 const userType = new GraphQLObjectType({
   name: user.name,
   fields: {
@@ -49,6 +76,14 @@ const userType = new GraphQLObjectType({
         ...userEventConnection.connectionArgs
       },
       resolve: userEventConnection.resolve
+    },
+    referrals: {
+      type: userReferralConnection.connectionType,
+      args: {
+        ...userReferralConnection.connectionArgs,
+        id: { type: GraphQLInt }
+      },
+      resolve: userReferralConnection.resolve
     }
   },
   interfaces: [nodeInterface]

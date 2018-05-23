@@ -13,6 +13,7 @@ import password from './password';
 import { createEvent, editEventById } from './event';
 import { createConfig, editConfigByName } from './config';
 import editViewer from './viewer';
+import { deleteReferral } from './referral';
 
 const mutations = {
   createEvent,
@@ -21,12 +22,12 @@ const mutations = {
   editViewer,
   ...password,
   createConfig,
-  editConfigByName
+  editConfigByName,
+  deleteReferral
 };
 
 // eslint-disable-next-line
 commonModel.map(name => {
-  // event need custom mutation to handle through model
   const createMutationName = `create${capitalize(name)}`;
   const editMutationName = `edit${capitalize(name)}ById`;
   mutations[createMutationName] = mutationWithClientMutationId({

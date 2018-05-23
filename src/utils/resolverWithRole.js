@@ -29,7 +29,8 @@ const acl = {
   referrals: ['SUPERADMIN', 'ADMIN'],
   referral: ['SUPERADMIN', 'ADMIN'],
   createReferral: ['DOCTOR'],
-  editReferralById: ['SUPERADMIN', 'ADMIN', 'OWNER']
+  editReferralById: ['SUPERADMIN', 'ADMIN', 'OWNER'],
+  deleteReferralById: ['SUPERADMIN', 'ADMIN', 'OWNER']
 };
 
 const level = {

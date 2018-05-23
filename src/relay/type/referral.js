@@ -2,13 +2,12 @@
 import { GraphQLString, GraphQLEnumType, GraphQLObjectType, GraphQLInt } from 'graphql';
 import { globalIdField } from 'graphql-relay';
 import { resolver, relay } from 'graphql-sequelize';
-import { referral, user, sequelize } from '../../models';
+import { referral, user } from '../../models';
 import { referralField, userField } from '../field';
 import node from './node';
 
 const { nodeInterface } = node;
 const { sequelizeConnection } = relay;
-const { Op } = sequelize;
 
 const referralType = new GraphQLObjectType({
   name: referral.name,
@@ -64,17 +63,7 @@ export default sequelizeConnection({
       createdAt: { value: ['createdAt', 'ASC'] }
     }
   }),
-  where: (key, value) => {
-    if (key === 'name') {
-      return {
-        name: {
-          [Op.like]: ' % $ { value } % '
-        }
-      };
-    }
-
-    return {
-      [key]: value
-    };
-  }
+  where: (key, value) => ({
+    [key]: value
+  })
 });

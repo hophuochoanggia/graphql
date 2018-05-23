@@ -49,6 +49,14 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.STRING(20),
         allowNull: true
       },
+      dva: {
+        type: DataTypes.STRING(20),
+        allowNull: true
+      },
+      dvaType: {
+        type: DataTypes.ENUM('GOLD', 'SILVER', 'ORANGE'),
+        allowNull: true
+      },
       data: {
         type: DataTypes.JSONB,
         allowNull: false
@@ -56,7 +64,14 @@ module.exports = function (sequelize, DataTypes) {
     },
     {
       timestamps: true,
-      freezeTableName: true
+      freezeTableName: true,
+      hooks: {
+        beforeDelete: instance => {
+          if (instance.status !== 'PENDING') {
+            throw new Error("Referral can't be deleted");
+          }
+        }
+      }
     }
   );
 

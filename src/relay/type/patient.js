@@ -1,29 +1,23 @@
-/* global Buffer*/
-import {
-  GraphQLString,
-  GraphQLEnumType,
-  GraphQLObjectType,
-  GraphQLInt
-} from "graphql";
-import { globalIdField } from "graphql-relay";
-import { relay } from "graphql-sequelize";
-import { patient, sequelize } from "../../models";
-import { patientField } from "../field";
-import eventType from "./event";
-import node from "./node";
+/* global Buffer */
+import { GraphQLString, GraphQLEnumType, GraphQLObjectType, GraphQLInt } from 'graphql';
+import { globalIdField } from 'graphql-relay';
+import { relay } from 'graphql-sequelize';
+import { patient } from '../../models';
+import { patientField } from '../field';
+import eventType from './event';
+import node from './node';
 
 const { nodeInterface } = node;
 const { sequelizeConnection } = relay;
-const { Op } = sequelize;
 
 const patientEventConnection = sequelizeConnection({
-  name: "patientEvent",
+  name: 'patientEvent',
   nodeType: eventType.nodeType,
   target: patient.events,
   orderBy: new GraphQLEnumType({
-    name: "PatientEventOrderBy",
+    name: 'PatientEventOrderBy',
     values: {
-      AGE: { value: ["createdAt", "DESC"] }
+      AGE: { value: ['createdAt', 'DESC'] }
     }
   }),
   where: (key, value) => ({
@@ -64,7 +58,7 @@ const patientType = new GraphQLObjectType({
 });
 
 export default sequelizeConnection({
-  name: "patient",
+  name: 'patient',
   nodeType: patientType,
   target: patient,
   connectionFields: {
@@ -77,30 +71,20 @@ export default sequelizeConnection({
     index: {
       type: GraphQLInt,
       resolve: edge =>
-        Buffer.from(edge.cursor, "base64")
-          .toString("ascii")
-          .split("$")
+        Buffer.from(edge.cursor, 'base64')
+          .toString('ascii')
+          .split('$')
           .pop()
     }
   },
   orderBy: new GraphQLEnumType({
-    name: "PatientOrderBy",
+    name: 'PatientOrderBy',
     values: {
-      firstName: { value: ["firstName", "ASC"] },
-      lastName: { value: ["lastName", "ASC"] }
+      firstName: { value: ['firstName', 'ASC'] },
+      lastName: { value: ['lastName', 'ASC'] }
     }
   }),
-  where: (key, value) => {
-    if (key === "name") {
-      return {
-        name: {
-          [Op.like]: " % $ { value } % "
-        }
-      };
-    }
-
-    return {
-      [key]: value
-    };
-  }
+  where: (key, value) => ({
+    [key]: value
+  })
 });

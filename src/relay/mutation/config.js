@@ -1,7 +1,7 @@
 import { GraphQLString } from 'graphql';
 import { mutationWithClientMutationId } from 'graphql-relay';
 import { resolverWithRole } from '../../utils/resolverWithRole';
-import { config, sequelize } from '../../models';
+import { config } from '../../models';
 import { configType } from '../type';
 import { configInput } from '../input';
 import { configFieldForInput } from '../field';

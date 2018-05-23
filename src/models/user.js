@@ -187,8 +187,15 @@ module.exports = function (sequelize, DataTypes) {
     }
   };
 
-  user.associate = ({ event, userEvent }) => {
+  user.associate = ({ referral, event, userEvent }) => {
     user.events = user.belongsToMany(event, { through: { model: userEvent } });
+    user.referral = user.hasMany(referral, {
+      foreignKey: {
+        fieldName: 'doctorId',
+        allowNull: false
+      },
+      onDelete: 'restrict'
+    });
   };
   return user;
 };
