@@ -45,6 +45,96 @@
             "title": " N/A"
           }
         }
+      },
+      "BANG": {
+        "type": "object",
+        "title": "BANG Questionaire",
+        "properties": {
+          "1": {
+            "type": "boolean",
+            "title": " BMI more than 35kg/m2?",
+            "default": false
+          },
+          "2": {
+            "type": "boolean",
+            "title": " AGE over 50 years old?",
+            "default": false
+          },
+          "3": {
+            "type": "boolean",
+            "title": " NECK circumference > 16 inches (40cm)?",
+            "default": false
+          },
+          "4": {
+            "type": "boolean",
+            "title": " GENDER: Male?",
+            "default": false
+          }
+        }
+      },
+      "drivingAssessment": {
+        "type": "object",
+        "title": "Driving License Assessment",
+        "properties": {
+          "drivingAssessment": {
+            "type": "boolean",
+            "title": " Driving License Assessment"
+          }
+        }
+      },
+      "ESS": {
+        "type": "object",
+        "title": "The Epworth Sleepiness Scale",
+        "properties": {
+          "1": {
+            "title": "Sitting and Reading",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          },
+          "2": {
+            "title": "Wathcing Television",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          },
+          "3": {
+            "title": "Sitting inactive in a public place (e.g. a theatre or meeting)",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          },
+          "4": {
+            "title": "As a passenger in a car for an hour without a break",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          },
+          "5": {
+            "title": "Lying down to rest in the afternoon when circumstances permit",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          },
+          "6": {
+            "title": "Sitting and talking to someone",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          },
+          "7": {
+            "title": "Sitting quietly after a lunch without alcohol",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          },
+          "8": {
+            "title": "In a car, while stopped for a few minutes in the traffic",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          }
+        }
       }
     }
   },
@@ -54,6 +144,46 @@
         "<p><strong>Reference</strong>: STOP Questionnaire (Chung F et al. Anesthesiology 2008 May; 108(5):812-21)</p>",
       "ui:help":
         "<p>Patients answering <strong>Yes to 2 or more</strong> of the above questions are at <strong>high risk of having OSA</strong> and may be referred directly for a Home Based Sleep Study. The Epworth Sleepiness Scale (ESS) may also be used to further determine the necessity for the investigation.</p>"
+    },
+    "ESS": {
+      "1": {
+        "ui:widget": "range"
+      },
+      "2": {
+        "ui:widget": "range"
+      },
+      "3": {
+        "ui:widget": "range"
+      },
+      "4": {
+        "ui:widget": "range"
+      },
+      "5": {
+        "ui:widget": "range"
+      },
+      "6": {
+        "ui:widget": "range"
+      },
+      "7": {
+        "ui:widget": "range"
+      },
+      "8": {
+        "ui:widget": "range"
+      }
+    },
+    "BANG": {
+      "1": {
+        "ui:readonly": true
+      },
+      "2": {
+        "ui:readonly": true
+      },
+      "3": {
+        "ui:readonly": true
+      },
+      "4": {
+        "ui:readonly": true
+      }
     }
   }
 }
