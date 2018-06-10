@@ -12,3 +12,14 @@ export const initReferral = model => {
     description: 'Referal metadata'
   });
 };
+
+export const initTask = model => {
+  const filePath = path.join(__dirname, 'studyTask.json');
+  const json = fs.readFileSync(filePath, 'utf8');
+
+  model.create({
+    name: 'STUDY-TASK',
+    setting: JSON.parse(json),
+    description: 'Study Task'
+  });
+};

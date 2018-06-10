@@ -1,5 +1,5 @@
 import seeder from '../../test/seeder';
-import { initReferral } from '../../init';
+import { initTask } from '../../init';
 
 const Sequelize = require('sequelize');
 const fs = require('fs');
@@ -35,7 +35,8 @@ if (env === 'dev') {
   db.sequelize.sync({ force: true, logging: false }).then(async () => {
     const { models } = db.sequelize;
     await seeder(models);
-    await initReferral(models.config);
+    //await initReferral(models.config);
+    await initTask(models.config);
   });
 }
 

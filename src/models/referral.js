@@ -47,7 +47,7 @@ module.exports = function (sequelize, DataTypes) {
       },
       drivingLicense: {
         type: DataTypes.STRING(20),
-        allowNull: true
+        allowNull: false
       },
       dva: {
         type: DataTypes.STRING(20),

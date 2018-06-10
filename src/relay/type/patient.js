@@ -3,7 +3,7 @@ import { GraphQLString, GraphQLEnumType, GraphQLObjectType, GraphQLInt } from 'g
 import { globalIdField } from 'graphql-relay';
 import { relay } from 'graphql-sequelize';
 import { patient } from '../../models';
-import { patientField } from '../field';
+import { eventField, patientField } from '../field';
 import eventType from './event';
 import node from './node';
 
@@ -49,7 +49,8 @@ const patientType = new GraphQLObjectType({
     events: {
       type: patientEventConnection.connectionType,
       args: {
-        ...patientEventConnection.connectionArgs
+        ...patientEventConnection.connectionArgs,
+        ...eventField
       },
       resolve: patientEventConnection.resolve
     }

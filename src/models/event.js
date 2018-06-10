@@ -11,12 +11,19 @@ module.exports = function (sequelize, DataTypes) {
         autoIncrement: true,
         allowNull: false
       },
-      status: {
-        type: DataTypes.ENUM('active', 'inactive', 'completed', 'deleted'),
+      isActive: {
+        type: DataTypes.ENUM('inactive', 'active', 'deleted'),
         defaultValue: 'active'
       },
+      status: {
+        type: DataTypes.ENUM('pending', 'accepted', 'completed'),
+        defaultValue: 'pending'
+      },
+      type: {
+        type: DataTypes.ENUM('STUDY', 'CPAP'),
+        allowNull: false
+      },
       data: {
-        // default get from eventType metadata
         type: DataTypes.JSONB,
         allowNull: false
       },
@@ -83,20 +90,12 @@ module.exports = function (sequelize, DataTypes) {
   };
 
   event.associate = ({
-    user, userEvent, patient, eventType, reason
+    user, userEvent, patient, reason
   }) => {
     event.users = event.belongsToMany(user, {
       through: {
         model: userEvent
       }
-    });
-
-    event.type = event.belongsTo(eventType, {
-      as: 'type',
-      foreignKey: {
-        allowNull: false
-      },
-      onDelete: 'restrict'
     });
 
     event.reason = event.belongsTo(reason, {

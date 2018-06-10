@@ -82,7 +82,11 @@ module.exports = function (sequelize, DataTypes) {
       },
       drivingLicense: {
         type: DataTypes.STRING(20),
-        allowNull: true
+        allowNull: false,
+        unique: {
+          args: true,
+          msg: 'Driving License has been used'
+        }
       },
       dva: {
         type: DataTypes.STRING(20),

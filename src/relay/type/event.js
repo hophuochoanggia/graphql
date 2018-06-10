@@ -2,8 +2,8 @@
 import { GraphQLInt, GraphQLString, GraphQLEnumType, GraphQLObjectType } from 'graphql';
 import { globalIdField } from 'graphql-relay';
 import { resolver, relay } from 'graphql-sequelize';
-import { user, event, patient, eventType as _eventType, reason } from '../../models';
-import { userField, eventField, eventTypeField, reasonField, patientField } from '../field';
+import { user, event, patient, reason } from '../../models';
+import { userField, eventField, reasonField, patientField } from '../field';
 import node from './node';
 
 const { nodeInterface } = node;
@@ -65,17 +65,6 @@ const eventType = new GraphQLObjectType({
         interfaces: [nodeInterface]
       }),
       resolve: resolver(event.patient)
-    },
-    type: {
-      type: new GraphQLObjectType({
-        name: 'typeOfEvent',
-        fields: {
-          id: globalIdField(_eventType.name),
-          ...eventTypeField
-        },
-        interfaces: [nodeInterface]
-      }),
-      resolve: resolver(event.type)
     },
     inactiveReason: {
       type: new GraphQLObjectType({

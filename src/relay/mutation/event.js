@@ -7,7 +7,7 @@ import { eventInput } from '../input';
 import { eventFieldForInput } from '../field';
 
 export const createEvent = mutationWithClientMutationId({
-  name: 'eventCreate',
+  name: 'createEvent',
   inputFields: {
     ...eventFieldForInput
   },

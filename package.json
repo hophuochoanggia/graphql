@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "aws-sdk": "^2.254.1",
     "babel": "^6.23.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-register": "^6.24.1",
@@ -19,9 +20,12 @@
     "graphql-sequelize": "^8.0.0",
     "graphql-type-json": "^0.2.0",
     "jsonwebtoken": "^8.2.0",
+    "multer": "^1.3.0",
+    "multer-s3": "^2.7.0",
     "pg": "^7.4.1",
     "pg-hstore": "^2.3.2",
     "ramda": "^0.25.0",
+    "react-s3-uploader": "^4.8.0",
     "sequelize": "^4.36.1"
   },
   "devDependencies": {
@@ -45,19 +49,22 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "prettier":
-      "prettier --single-quote --trailing-comma es5 --write src/**/*.js && prettier --single-quote --trailing-comma es5 --write test/**/*.js ",
+    "prettier": "prettier --single-quote --trailing-comma es5 --write src/**/*.js && prettier --single-quote --trailing-comma es5 --write test/**/*.js ",
     "start": "node src/index.js",
     "dev": "nodemon src/index.js --watch common --watch src",
     "test": "jest --watch",
     "testAll": "jest --runInBand --watch",
-    "coverage":
-      "istanbul cover ./node_modules/mocha/bin/_mocha -- --recursive -R nyan --timeout 5000 && istanbul report",
+    "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha -- --recursive -R nyan --timeout 5000 && istanbul report",
     "initSetting": "node init/index.js"
   },
   "jest": {
     "testEnvironment": "node",
-    "testPathIgnorePatterns": ["/node_modules/"],
-    "coverageReporters": ["lcov", "html"]
+    "testPathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "coverageReporters": [
+      "lcov",
+      "html"
+    ]
   }
 }

@@ -27,6 +27,10 @@ const referralType = new GraphQLObjectType({
         name: 'doctorOfReferral',
         fields: {
           id: globalIdField(user.name),
+          _id: {
+            type: GraphQLInt,
+            resolve: instance => instance.id
+          },
           ...userField
         },
         interfaces: [nodeInterface]
