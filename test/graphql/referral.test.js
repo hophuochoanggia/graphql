@@ -1,29 +1,37 @@
-import { graphql } from 'graphql';
-import { lensPath, view } from 'ramda';
-import models from '../../src/models';
-import seeder from '../seeder';
-import schema from '../../src/relay';
+import { graphql } from "graphql";
+import { lensPath, view } from "ramda";
+import models from "../../src/models";
+import seeder from "../seeder";
+import schema from "../../src/relay";
 
-const roles = ['SUPERADMIN', 'ADMIN', 'CONSULTANT', 'DOCTOR', 'SPECIALIST', 'DENTIST'];
-const edgePath = lensPath(['edges', 0, 'node']);
+const roles = [
+  "SUPERADMIN",
+  "ADMIN",
+  "CONSULTANT",
+  "DOCTOR",
+  "SPECIALIST",
+  "DENTIST"
+];
+const edgePath = lensPath(["edges", 0, "node"]);
 let data;
 
 beforeAll(async () => {
   await models.sequelize.sync({ force: true, logging: false });
   data = await seeder(models);
   models.referral.create({
-    firstName: 'test',
-    lastName: 'test',
-    birthday: '1989-12-10',
-    email: 'test@test.com',
+    firstName: "test",
+    lastName: "test",
+    birthday: "1989-12-10",
+    email: "test@test.com",
+    drivingLicense: "10",
     data: {},
     doctorId: 4
   });
 });
 
-describe('Referral Model', () => {
-  describe('query list referrral ACL', () => {
-    const allowedRole = ['SUPERADMIN', 'ADMIN'];
+describe("Referral Model", () => {
+  describe("query list referrral ACL", () => {
+    const allowedRole = ["SUPERADMIN", "ADMIN"];
     roles.map((role, index) =>
       test(`As ${role}`, async () => {
         const query = `{
@@ -36,19 +44,25 @@ describe('Referral Model', () => {
             }
           }
         `;
-        const result = await graphql(schema, query, {}, { role, id: data.users[index].id });
+        const result = await graphql(
+          schema,
+          query,
+          {},
+          { role, id: data.users[index].id }
+        );
         if (allowedRole.includes(role)) {
           const { firstName } = view(edgePath, result.data.referrals);
-          expect(firstName).toBe('test');
+          expect(firstName).toBe("Referral");
         } else {
           const { message } = result.errors[0];
-          expect(message).toBe('Unauthorized');
+          expect(message).toBe("Unauthorized");
         }
-      }));
+      })
+    );
   });
 
-  describe('query referral ACL', () => {
-    const allowedRole = ['SUPERADMIN', 'ADMIN'];
+  describe("query referral ACL", () => {
+    const allowedRole = ["SUPERADMIN", "ADMIN"];
     roles.map((role, index) =>
       test(`As ${role}`, async () => {
         const query = `{
@@ -63,20 +77,26 @@ describe('Referral Model', () => {
             }
           }
         }`;
-        const result = await graphql(schema, query, {}, { role, id: data.users[index].id });
+        const result = await graphql(
+          schema,
+          query,
+          {},
+          { role, id: data.users[index].id }
+        );
         if (allowedRole.includes(role)) {
           const { firstName, doctor } = view(edgePath, result.data.referral);
-          expect(firstName).toBe('test');
-          expect(doctor.firstName).toBe('Doctor');
+          expect(firstName).toBe("Referral");
+          expect(doctor.firstName).toBe("Doctor");
         } else {
           const { message } = result.errors[0];
-          expect(message).toBe('Unauthorized');
+          expect(message).toBe("Unauthorized");
         }
-      }));
+      })
+    );
   });
 
-  describe('create referral ACL', () => {
-    const allowedRole = ['DOCTOR'];
+  describe("create referral ACL", () => {
+    const allowedRole = ["DOCTOR"];
     roles.map((role, index) =>
       test(`As ${role}`, async () => {
         const query = `
@@ -86,6 +106,7 @@ describe('Referral Model', () => {
               lastName: "test"
               birthday: "1989-12-10",
               email: "test@test.com",
+              drivingLicense: "1234",
               data: {},
               doctorId: 4
             }) {
@@ -95,19 +116,25 @@ describe('Referral Model', () => {
             }
           }
         `;
-        const result = await graphql(schema, query, {}, { role, id: data.users[index].id });
+        const result = await graphql(
+          schema,
+          query,
+          {},
+          { role, id: data.users[index].id }
+        );
         if (allowedRole.includes(role)) {
           const { firstName } = result.data.createReferral.response;
-          expect(firstName).toBe('acl');
+          expect(firstName).toBe("acl");
         } else {
           const { message } = result.errors[0];
-          expect(message).toBe('Unauthorized');
+          expect(message).toBe("Unauthorized");
         }
-      }));
+      })
+    );
   });
 
-  describe('edit referral ACL', () => {
-    const allowedRole = ['SUPERADMIN', 'ADMIN', 'DOCTOR'];
+  describe("edit referral ACL", () => {
+    const allowedRole = ["SUPERADMIN", "ADMIN", "DOCTOR"];
     roles.map((role, index) =>
       test(`As ${role}`, async () => {
         const query = `
@@ -124,14 +151,20 @@ describe('Referral Model', () => {
             }
           }
         `;
-        const result = await graphql(schema, query, {}, { role, id: data.users[index].id });
+        const result = await graphql(
+          schema,
+          query,
+          {},
+          { role, id: data.users[index].id }
+        );
         if (allowedRole.includes(role)) {
           const { firstName } = result.data.editReferralById.response;
-          expect(firstName).toBe('editAcl');
+          expect(firstName).toBe("editAcl");
         } else {
           const { message } = result.errors[0];
-          expect(message).toBe('Unauthorized');
+          expect(message).toBe("Unauthorized");
         }
-      }));
+      })
+    );
   });
 });

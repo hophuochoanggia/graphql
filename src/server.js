@@ -1,18 +1,25 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import jwt from 'express-jwt';
-import GraphHTTP from 'express-graphql';
-import cors from 'cors';
-import multer from 'multer';
-import multerS3 from 'multer-s3';
-import AWS from 'aws-sdk';
+import express from "express";
+import bodyParser from "body-parser";
+import jwt from "express-jwt";
+import GraphHTTP from "express-graphql";
+import cors from "cors";
+import multer from "multer";
+import multerS3 from "multer-s3";
+import AWS from "aws-sdk";
 
-import models from './models';
-import Schema from './relay';
+import Raven from "raven";
 
-const env = process.env.NODE_ENV || 'test';
-const accessKeyId = process.env.AWS_ACCESS_KEY || 'AKIAJT74QVA7FLG6RIXA';
-const secretAccessKey = process.env.AWS_SECRET_KEY || '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';
+import models from "./models";
+import Schema from "./relay";
+
+const env = process.env.NODE_ENV || "test";
+const accessKeyId = process.env.AWS_ACCESS_KEY || "AKIAJT74QVA7FLG6RIXA";
+const secretAccessKey =
+  process.env.AWS_SECRET_KEY || "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";
+
+Raven.config(
+  "https://5843d8a4644e4f75ac8a96e09404740d@sentry.io/1226786"
+).install();
 
 AWS.config.update({
   accessKeyId,
@@ -23,8 +30,8 @@ const s3 = new AWS.S3();
 const upload = multer({
   storage: multerS3({
     s3,
-    bucket: 'bizman-test',
-    acl: 'public-read',
+    bucket: "bizman-test",
+    acl: "public-read",
     contentDisposition: (req, file, cb) => {
       cb(null, `filename=${file.originalname}`);
     },
@@ -56,32 +63,36 @@ models.sequelize
   .catch(e => {
     throw new Error(e);
   });
-app.use('*', cors({ origin: '*' }));
+
+app.use(Raven.requestHandler());
+app.use("*", cors({ origin: "*" }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(jwt({
-  secret: config.SECRET,
-  credentialsRequired: false
-}));
+app.use(
+  jwt({
+    secret: config.SECRET,
+    credentialsRequired: false
+  })
+);
 
 app.use((req, res, next) => {
   const ts = Math.round(new Date().getTime() / 1000);
   if (req && ts > req.exp) {
     res.status(404).send({
-      error: 'Token expires'
+      error: "Token expires"
     });
   } else {
     next();
   }
 });
 
-app.post('/referral', upload.single('referral'), (req, res) => {
+app.post("/referral", upload.single("referral"), (req, res) => {
   res.json(req.file);
 });
 
 app.use(
-  '/graphql',
+  "/graphql",
   GraphHTTP(req => ({
     schema: Schema,
     context: req.user,
@@ -89,3 +100,4 @@ app.use(
     graphiql: false
   }))
 );
+app.use(Raven.errorHandler());

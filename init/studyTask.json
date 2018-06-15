@@ -1,13 +1,19 @@
 {
-  "tasks": [
-    {
-      "description": "1"
+  "tasks": [{
+      "description": "Set-up Alice PDx and prepare for Sleep Study.<br />1. Configure Alice PDx. Refer to manual if unsure.<br />2. Assign a Sleep Study Date and Complete the section [Office Use].<br />3. Print Sleep Study Documents on BizMan-V2.<br />4. Patient to sign where relevant on the day of Sleep Study.",
+      "key": "0"
     },
     {
-      "description": "2"
+      "description": "Collect Alice PDx and process overnight data.<br />1. G3 - Import the data and transfer to CLM Sleep Co. server.<br />2. BizMan-V2 - Upload Completed Sleep Study Documents (Signed Medicare Form, Completed Tech Sheet, Sleep Log & Tech Feedback Form & Sleep Study Service Disclaimer).",
+      "key": "1"
     },
     {
-      "description": "3"
+      "description": "Sleep Scientist: Scoring in progress.<br />1. Complete the section [Sleep Scientist Use].",
+      "key": "2"
+    },
+    {
+      "description": "Sleep Scientist Manager: QC in progress.",
+      "key": "3"
     }
   ]
 }

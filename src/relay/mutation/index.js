@@ -1,28 +1,31 @@
-import { GraphQLInt } from 'graphql';
-import { mutationWithClientMutationId } from 'graphql-relay';
-import { resolverWithRole } from '../../utils/resolverWithRole';
-import { commonModel } from '../../config';
-import capitalize from '../../utils/capitalize';
-import models from '../../models';
-import type from '../type';
-import input from '../input';
-import field from '../field';
+import { GraphQLInt } from "graphql";
+import { mutationWithClientMutationId } from "graphql-relay";
+import { resolverWithRole } from "../../utils/resolverWithRole";
+import { commonModel } from "../../config";
+import capitalize from "../../utils/capitalize";
+import models from "../../models";
+import type from "../type";
+import input from "../input";
+import field from "../field";
 
-import login from './login';
-import password from './password';
-import { createEvent, editEventById } from './event';
-import { createConfig, editConfigByName } from './config';
-import editViewer from './viewer';
-import { deleteReferral } from './referral';
+import login from "./login";
+import password from "./password";
+import { createEvent, editEventById, finishStudyTask } from "./event";
+import { createConfig, editConfigByName } from "./config";
+import editViewer from "./viewer";
+import { createReferral, editReferralById, deleteReferral } from "./referral";
 
 const mutations = {
   createEvent,
   editEventById,
+  finishStudyTask,
   login,
   editViewer,
   ...password,
   createConfig,
   editConfigByName,
+  createReferral,
+  editReferralById,
   deleteReferral
 };
 
@@ -42,7 +45,9 @@ commonModel.map(name => {
       }
     }),
     mutateAndGetPayload: (params, { role }) =>
-      resolverWithRole(createMutationName, role, {}, () => models[name].create(params))
+      resolverWithRole(createMutationName, role, {}, () =>
+        models[name].create(params)
+      )
   });
 
   mutations[editMutationName] = mutationWithClientMutationId({
@@ -73,7 +78,8 @@ commonModel.map(name => {
             model: name
           },
           () => instance.update(data)
-        ))
+        )
+      )
   });
 });
 export default mutations;
