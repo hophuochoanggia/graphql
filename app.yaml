@@ -1,0 +1,10 @@
+apps:
+
+  - name: server
+    script: ./src/index.js
+    env:
+        PORT: 8080
+    min_uptime: 1m
+    max_restarts: 1
+    out_file: ./logs/server.log
+    merge_logs: true
