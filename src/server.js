@@ -7,8 +7,6 @@ import multer from "multer";
 import multerS3 from "multer-s3";
 import AWS from "aws-sdk";
 
-import Raven from "raven";
-
 import models from "./models";
 import Schema from "./relay";
 
@@ -16,10 +14,6 @@ const env = process.env.NODE_ENV || "test";
 const accessKeyId = process.env.AWS_ACCESS_KEY || "AKIAJT74QVA7FLG6RIXA";
 const secretAccessKey =
   process.env.AWS_SECRET_KEY || "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";
-
-Raven.config(
-  "https://5843d8a4644e4f75ac8a96e09404740d@sentry.io/1226786"
-).install();
 
 AWS.config.update({
   accessKeyId,
@@ -58,14 +52,12 @@ function startApp(instance, port) {
 models.sequelize
   .sync()
   .then(() => {
-    console.log(process.env)
     startApp(app, process.env.PORT || 8000);
   })
   .catch(e => {
     throw new Error(e);
   });
 
-app.use(Raven.requestHandler());
 app.use("*", cors({ origin: "*" }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -101,4 +93,3 @@ app.use(
     graphiql: false
   }))
 );
-app.use(Raven.errorHandler());
